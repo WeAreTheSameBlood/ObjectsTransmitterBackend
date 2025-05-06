@@ -5,7 +5,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class ObjectModel {
+export class ObjectFile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ObjectModel } from '../models/storage/object.model';
-import { v4 as uuidv4 } from 'uuid';
+import { ObjectFile } from '../models/storage/object.file';
 import { AppWriteManager } from '../services/appwrite/appwrite-manager.service';
 
 @Injectable()
 export class ObjectsService {
+  // MARK: - Init
   constructor(
-    @InjectRepository(ObjectModel)
-    private objectRepo: Repository<ObjectModel>,
+    @InjectRepository(ObjectFile)
+    private objectRepo: Repository<ObjectFile>,
     private appWriteManager: AppWriteManager,
   ) {}
 
+  // MARK: - Create
   async createObject(
     file: Express.Multer.File,
-    name: string,
-  ): Promise<ObjectModel> {
+    name: string
+  ): Promise<ObjectFile> {
     const fileId = await this.appWriteManager.uploadModelFile(file);
-    
     const sizeInMb = file.size / (1024 * 1024);
     const obj = this.objectRepo.create({
       name,
@@ -26,5 +26,15 @@ export class ObjectsService {
       size: sizeInMb,
     });
     return this.objectRepo.save(obj);
+  }
+
+  // MARK: - Find All
+  async findAll(): Promise<ObjectFile[]> {
+    return this.objectRepo.find();
+  }
+
+  // MARK: - Find One
+  async findOne(id: string): Promise<ObjectFile | null> {
+    return this.objectRepo.findOne({ where: { id } });
   }
 }

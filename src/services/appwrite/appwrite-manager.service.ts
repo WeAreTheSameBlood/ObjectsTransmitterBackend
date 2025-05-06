@@ -60,6 +60,6 @@ export class AppWriteManager {
     const endpoint =  this.configService.get<string>('APPWRITE_ENDPOINT');
     const project =   this.configService.get<string>('APPWRITE_PROJECT_ID');
     
-    return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${project}`;
+    return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/download?project=${project}`;
   }
 }
