@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ObjectsModule } from './objects/objects.module';
 import { AppWriteManager } from './services/appwrite/appwrite-manager.service';
@@ -21,9 +19,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     ObjectsModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     AppWriteManager
   ],
 })

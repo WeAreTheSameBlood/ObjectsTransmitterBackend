@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ObjectModel } from './object.model';
+import { ObjectModel } from '../models/storage/object.model';
 import { v4 as uuidv4 } from 'uuid';
 import { AppWriteManager } from '../services/appwrite/appwrite-manager.service';
 

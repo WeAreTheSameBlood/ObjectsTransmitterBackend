@@ -24,7 +24,7 @@ export class AppWriteManager {
   }
 
   // MARK: - Upload
-  async uploadModelFile(
+  public async uploadModelFile(
     file: Express.Multer.File,
     bucketId: string = process.env.APPWRITE_BUCKET_ID!,
   ): Promise<string> {
@@ -53,12 +53,12 @@ export class AppWriteManager {
   }
 
   // MARK: - Download
-  getFileDownloadUrl(
+  public getFileDownloadUrl(
     bucketId: string,
     fileId: string
   ): string {
     const endpoint =  this.configService.get<string>('APPWRITE_ENDPOINT');
-    const project = this.configService.get<string>('APPWRITE_PROJECT_ID');
+    const project =   this.configService.get<string>('APPWRITE_PROJECT_ID');
     
     return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${project}`;
   }

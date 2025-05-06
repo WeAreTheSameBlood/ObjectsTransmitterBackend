@@ -4,8 +4,8 @@ import { Controller, Post, UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectsService } from './objects.service';
-import { AppWriteManager } from '../services/appwrite/appwrite-manager.service';
-import { ObjectModel } from './object.model';
+import { AppWriteManager } from '@services/appwrite/appwrite-manager.service';
+import { ObjectModel } from '@models/storage/object.model';
 
 @Controller({ path: 'model', version: '1' })
 export class ObjectsController {
