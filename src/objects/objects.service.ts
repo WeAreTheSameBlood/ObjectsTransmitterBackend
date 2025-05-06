@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ObjectFile } from '../models/storage/object.file';
-import { AppWriteManager } from '../services/appwrite/appwrite-manager.service';
+import { ObjectFile } from '@models/storage/object.file';
+import { AppWriteManager } from '@services/appwrite/appwrite-manager.service';
 
 @Injectable()
 export class ObjectsService {
@@ -19,7 +19,7 @@ export class ObjectsService {
     name: string
   ): Promise<ObjectFile> {
     const fileId = await this.appWriteManager.uploadModelFile(file);
-    const sizeInMb = file.size / (1024 * 1024);
+    const sizeInMb = file.size / (1024 * 1024);     // byte --> kb --> Mb
     const obj = this.objectRepo.create({
       name,
       model_file_url_key: fileId,
