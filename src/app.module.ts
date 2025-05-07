@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ObjectsModule } from './objects/objects.module';
-import { AppWriteManager } from './services/appwrite/appwrite-manager.service';
+import { ObjectsModule } from './modules/objects/objects.module';
+import { AppWriteManager } from '@services/appwrite/AppWriteManager';
 import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
     }),
     ObjectsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [

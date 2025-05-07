@@ -4,7 +4,7 @@ import {
   Column, CreateDateColumn,
   OneToMany, ManyToMany, JoinTable,
 } from 'typeorm';
-import { ObjectFile } from '@models/storage/object.file';
+import { ObjectFile } from '@modules/objects/entities/storage/ObjectFile';
 
 @Entity('users')
 export class User {

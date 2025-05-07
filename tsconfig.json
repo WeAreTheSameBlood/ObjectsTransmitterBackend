@@ -11,9 +11,10 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@models/*":    ["src/models/*"],
-      "@services/*":  ["src/services/*"],
-      "@src/*":       ["src/*"]
+      "@src/*":       ["src/*"],
+      "@modules/*":   ["src/modules/*"],
+      "@common/*":    ["src/common/*"],
+      "@services/*":  ["src/common/services/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

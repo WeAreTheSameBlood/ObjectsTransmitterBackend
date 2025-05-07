@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ObjectFile } from '@models/storage/object.file';
-import { AppWriteManager } from '@services/appwrite/appwrite-manager.service';
+import { ObjectFile } from '@modules/objects/entities/storage/ObjectFile';
+import { AppWriteManager } from '@services/appwrite/AppWriteManager';
 
 @Injectable()
 export class ObjectsService {

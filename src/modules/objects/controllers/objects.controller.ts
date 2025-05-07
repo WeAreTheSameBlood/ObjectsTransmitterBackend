@@ -4,9 +4,9 @@ import {
   HttpException, HttpStatus, HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ObjectsService } from './objects.service';
-import { AppWriteManager } from '@services/appwrite/appwrite-manager.service';
-import { ObjectFile } from '@models/storage/object.file';
+import { ObjectsService } from '../services/objects.service';
+import { ObjectFile } from '../entities/storage/ObjectFile';
+import { AppWriteManager } from '@services/appwrite/AppWriteManager';
 
 @Controller({ path: 'models', version: '1' })
 // MARK: - Init
@@ -53,10 +53,10 @@ export class ObjectsController {
     const objectFiles = await this.objectsService.findAll();
     return {
       objectFiles: objectFiles.map((file) => ({
-        id:   file.id,
-        name: file.name,
-        size: file.size,
-        size_type: "Mb",
+        id:         file.id,
+        name:       file.name,
+        size:       file.size,
+        size_type:  "Mb",
       })),
     };
   }
@@ -73,10 +73,10 @@ export class ObjectsController {
     );
 
     return {
-      id:   object.id,
-      name: object.name,
-      size: object.size,
-      size_type: "Mb",
+      id:           object.id,
+      name:         object.name,
+      size:         object.size,
+      size_type:    "Mb",
       date_created: object.date_created,
       downloadUrl,
     };

@@ -3,7 +3,7 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn, ManyToOne
 } from 'typeorm';
-import { User } from '@models/storage/user';
+import { User } from '@modules/users/entities/storage/User';
 
 @Entity('object_files')
 export class ObjectFile {
