@@ -1,11 +1,13 @@
 import {
     Entity, Column,
     PrimaryGeneratedColumn,
-    CreateDateColumn,
+    CreateDateColumn, ManyToOne
 } from 'typeorm';
+import { User } from '@models/storage/user';
 
-@Entity()
+@Entity('object_files')
 export class ObjectFile {
+  // Properties
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,4 +22,11 @@ export class ObjectFile {
 
   @CreateDateColumn()
   date_created: Date;
+
+  // Realated
+  @ManyToOne(() => User, (user) => user.addedModels, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  owner?: User;
 }
