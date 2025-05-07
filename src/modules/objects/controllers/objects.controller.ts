@@ -7,10 +7,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectsService } from '../services/objects.service';
 import { ObjectFile } from '../entities/storage/ObjectFile';
 import { AppWriteManager } from '@services/appwrite/AppWriteManager';
+import { ObjectGeneralInfoDTO, ObjectsAddDTO } from '../entities/dtos';
+import { ObjectDetailsInfoDTO } from '../entities/dtos/object-detail-info.dto';
+import { UserGeneralInfoDTO } from '@src/modules/users/entities/dtos';
 
 @Controller({ path: 'models', version: '1' })
-// MARK: - Init
 export class ObjectsController {
+  // MARK: - Init
   constructor(
     private readonly objectsService: ObjectsService,
     private readonly appWriteManager: AppWriteManager,
@@ -22,9 +25,9 @@ export class ObjectsController {
   @UseInterceptors(FileInterceptor('model_file'))
   async uploadModel(
     @UploadedFile() file: Express.Multer.File,
-    @Body('name') name: string,
-  ) {
-    if (!file || !name) {
+    @Body() objectDto: ObjectsAddDTO,
+  ): Promise<{ id: string }> {
+    if (!file || !objectDto.name) {
       throw new HttpException(
         'Missing file or name',
         HttpStatus.BAD_REQUEST
@@ -32,7 +35,7 @@ export class ObjectsController {
     }
     
     // Create new ObjectFile
-    const object: ObjectFile = await this.objectsService.createObject(file, name);
+    const object: ObjectFile = await this.objectsService.createObject(file, objectDto);
 
     return { id: object.id };
   }
@@ -42,43 +45,59 @@ export class ObjectsController {
   @HttpCode(HttpStatus.OK)
   async getModels(
     @Query('id') id?: string
-  ) {
+  ): Promise<any> {
     return id
       ? this.getModelById(id)
       : this.getAllModels();
   }
 
   // MARK: - Private
-  private async getAllModels() {
+  private async getAllModels(
+  ): Promise<ObjectGeneralInfoDTO[]> {
     const objectFiles = await this.objectsService.findAll();
-    return {
-      objectFiles: objectFiles.map((file) => ({
+    return objectFiles.map((file) => ({
         id:         file.id,
         name:       file.name,
         size:       file.size,
         size_type:  "Mb",
-      })),
-    };
+      }))
   }
 
-  private async getModelById(id: string) {
+  private async getModelById(
+    id: string
+  ): Promise<ObjectDetailsInfoDTO> {
     const object = await this.objectsService.findOne(id);
     if (!object) {
-      throw new HttpException('Model not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Model not found',
+        HttpStatus.NOT_FOUND
+      );
     }
+
+    let ownerDto: UserGeneralInfoDTO | undefined;
+    if (object.owner) {
+      ownerDto = {
+        id:               object.owner.id,
+        username:         object.owner.username,
+        dateRegistration: object.owner.dateRegistration.toDateString(),
+        addedModelsCount: object.owner.addedModels?.length ?? 0,
+      };
+     }
 
     const downloadUrl = this.appWriteManager.getFileDownloadUrl(
       process.env.APPWRITE_BUCKET_ID!,
       object.model_file_url_key,
     );
 
-    return {
+    const result: ObjectDetailsInfoDTO = {
       id:           object.id,
       name:         object.name,
       size:         object.size,
-      size_type:    "Mb",
-      date_created: object.date_created,
-      downloadUrl,
+      size_type:    'Mb',
+      date_created: object.date_created.toDateString(),
+      owner:        ownerDto,
+      download_url: downloadUrl,
     };
+    return result;
   }
 }

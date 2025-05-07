@@ -16,7 +16,9 @@ export class UsersController {
   // MARK: - Create
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() userDto: UserAddDTO): Promise<String> {
+  async create(
+    @Body() userDto: UserAddDTO
+  ): Promise<String> {
     return await this.usersService.create(userDto);
   }
 
@@ -28,8 +30,8 @@ export class UsersController {
     const usersResults: UserGeneralInfoDTO[] = users.map((user) => ({
       id:               user.id,
       username:         user.username,
-      dateRegistration: user.dateRegistration,
-      addedModelsCount: user.addedModels?.length ?? 0,
+      dateRegistration: user.dateRegistration.toDateString(),
+      addedModelsCount: user.addedModels.length
     }));
     return usersResults;
   }
@@ -53,8 +55,8 @@ export class UsersController {
       username:             user.username,
       name:                 user.name ?? '',
       dateRegistration:     user.dateRegistration,
-      addedModelsCount:     user.addedModels?.length ?? 0,
-      favoriteModelsCount:  user.favoriteModels?.length ?? 0,
+      addedModelsCount:     user.addedModels.length,
+      favoriteModelsCount:  user.favoriteModels.length
     };
     return result;
   }

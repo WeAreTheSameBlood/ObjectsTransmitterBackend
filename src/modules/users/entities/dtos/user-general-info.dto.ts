@@ -1,6 +1,6 @@
 export class UserGeneralInfoDTO {
   id: string;
   username: string;
-  dateRegistration: Date;
+  dateRegistration: string;
   addedModelsCount: number;
 }
