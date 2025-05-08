@@ -6,17 +6,17 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectsService } from '../services/objects.service';
 import { ObjectFile } from '../entities/storage/ObjectFile';
-import { AppWriteManager } from '@services/appwrite/AppWriteManager';
 import { ObjectGeneralInfoDTO, ObjectsAddDTO } from '../entities/dtos';
 import { ObjectDetailsInfoDTO } from '../entities/dtos/object-detail-info.dto';
 import { UserGeneralInfoDTO } from '@src/modules/users/entities/dtos';
+import { AppWriteStorageService } from '@src/common/services/appwrite';
 
 @Controller({ path: 'models', version: '1' })
 export class ObjectsController {
   // MARK: - Init
   constructor(
     private readonly objectsService: ObjectsService,
-    private readonly appWriteManager: AppWriteManager,
+    private readonly storageService: AppWriteStorageService,
   ) {}
 
   // MARK: - POST
@@ -84,7 +84,7 @@ export class ObjectsController {
       };
      }
 
-    const downloadUrl = this.appWriteManager.getFileDownloadUrl(
+    const downloadUrl = this.storageService.getFileDownloadUrl(
       process.env.APPWRITE_BUCKET_ID!,
       object.model_file_url_key,
     );

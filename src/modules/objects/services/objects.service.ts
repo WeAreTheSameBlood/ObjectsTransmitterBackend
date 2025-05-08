@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ObjectFile } from '@modules/objects/entities/storage/ObjectFile';
-import { AppWriteManager } from '@services/appwrite/AppWriteManager';
+import { AppWriteStorageService } from '@services/appwrite';
 import { ObjectsRepository } from '../repositories/objects.repository';
 import { ObjectsAddDTO } from '../entities/dtos';
 import { UsersRepository } from '@modules/users/repositories/users.repository';
@@ -11,8 +11,8 @@ export class ObjectsService {
   // MARK: - Init
   constructor(
     private objectRepo: ObjectsRepository,
-    private appWriteManager: AppWriteManager,
     private usersRepo: UsersRepository,
+    private storageService: AppWriteStorageService,
   ) {}
 
   // MARK: - Create
@@ -20,7 +20,7 @@ export class ObjectsService {
     file: Express.Multer.File,
     objectDto: ObjectsAddDTO,
   ): Promise<ObjectFile> {
-    const fileId = await this.appWriteManager.uploadModelFile(file);
+    const fileId = await this.storageService.uploadModelFile(file);
     const sizeInMb = file.size / (1024 * 1024);     // byte --> kb --> Mb
 
     const obj = this.objectRepo.create({
@@ -28,14 +28,11 @@ export class ObjectsService {
       model_file_url_key: fileId,
       size: sizeInMb,
     });
-    
+
     if (objectDto.owner_id) {
       const owner = await this.usersRepo.findOne(objectDto.owner_id);
       if (!owner) {
-        throw new HttpException(
-          'Owner not found',
-          HttpStatus.NOT_FOUND
-        );
+        throw new HttpException('Owner not found', HttpStatus.NOT_FOUND);
       }
       obj.owner = owner;
     }

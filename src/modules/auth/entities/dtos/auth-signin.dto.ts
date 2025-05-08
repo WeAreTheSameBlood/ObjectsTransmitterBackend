@@ -10,8 +10,4 @@ export class AuthSingInDTO {
 
   @IsString()
   username: string;
-
-  @IsOptional()
-  @IsUrl()
-  redirectUrl?: string;
 }
