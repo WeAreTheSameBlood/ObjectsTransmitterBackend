@@ -9,21 +9,15 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private authService: AppWriteAuthService,
-  ) {}
+  ) { }
 
   // MARK: - SingIn
-  async singIn(
-    dto: AuthSingInDTO
-  ): Promise<{
+  async singIn(dto: AuthSingInDTO): Promise<{
     userId: string;
-    email: string
+    email: string;
   }> {
     try {
-      return this.authService.createUser(
-        dto.email,
-        dto.password,
-        dto.username,
-      );
+      return this.authService.createUser(dto.email, dto.password, dto.username);
     } catch (exception: any) {
       throw new HttpException(
         exception.message,
@@ -33,23 +27,32 @@ export class AuthService {
   }
 
   // MARK: - Login
-  async login(
-    dto: AuthLoginDTO
-  ): Promise<{ accessToken: string }> {
+  async login(dto: AuthLoginDTO): Promise<{ accessToken: string }> {
     try {
       const { userId } = await this.authService.createSession(
-        dto.email, dto.password
+        dto.email,
+        dto.password,
       );
       const payload = {
-        sub: userId, email: dto.email
+        sub: userId,
+        email: dto.email,
       };
       const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } catch (exception: any) {
-      throw new HttpException(
-        exception.message,
-        HttpStatus.UNAUTHORIZED
-      );
+      throw new HttpException(exception.message, HttpStatus.UNAUTHORIZED);
     }
+  }
+
+  // MARK: - Logout
+  async logout(
+    sessionId: string
+  ): Promise<{ success: boolean }> {
+    try {
+      this.authService.deleteSession(sessionId);
+      return {success: true};
+    } catch (exception: any) {
+      throw new HttpException(exception.message, HttpStatus.INTERNAL_SERVER_ERROR);
+     }
   }
 }
