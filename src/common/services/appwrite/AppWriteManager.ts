@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { Client, Storage } from 'node-appwrite';
+import { Account, Client, Storage } from 'node-appwrite';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { fileFromPath } from 'formdata-node/file-from-path';
+import { AuthSingInDTO } from '@src/modules/auth/entities/dtos';
 
 @Injectable()
 export class AppWriteManager {
   // MARK: - Properties
   private client: Client;
   private storage: Storage;
+  private account: Account;
 
   // MARK: - Init
   constructor(private configService: ConfigService) {
     this.client = new Client()
-      .setEndpoint( this.configService.get<string>('APPWRITE_ENDPOINT')!)
-      .setProject(  this.configService.get<string>('APPWRITE_PROJECT_ID')!)
-      .setKey(      this.configService.get<string>('APPWRITE_API_KEY')!);
-      
+      .setEndpoint(this.configService.get<string>('APPWRITE_ENDPOINT')!)
+      .setProject(this.configService.get<string>('APPWRITE_PROJECT_ID')!)
+      .setKey(this.configService.get<string>('APPWRITE_API_KEY')!);
+
     this.storage = new Storage(this.client);
+    this.account = new Account(this.client);
   }
 
   // MARK: - Upload
@@ -53,13 +56,10 @@ export class AppWriteManager {
   }
 
   // MARK: - Download
-  public getFileDownloadUrl(
-    bucketId: string,
-    fileId: string
-  ): string {
-    const endpoint =  this.configService.get<string>('APPWRITE_ENDPOINT');
-    const project =   this.configService.get<string>('APPWRITE_PROJECT_ID');
-    
+  public getFileDownloadUrl(bucketId: string, fileId: string): string {
+    const endpoint = this.configService.get<string>('APPWRITE_ENDPOINT');
+    const project = this.configService.get<string>('APPWRITE_PROJECT_ID');
+
     return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/download?project=${project}`;
   }
 }

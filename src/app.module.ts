@@ -4,6 +4,7 @@ import { ObjectsModule } from './modules/objects/objects.module';
 import { AppWriteManager } from '@services/appwrite/AppWriteManager';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from './modules/users/users.module';
     }),
     ObjectsModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
