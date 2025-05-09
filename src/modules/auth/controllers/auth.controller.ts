@@ -29,6 +29,14 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  // MARK: - Logout
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  logout(@Body('sessionId') sessionId: string) {
+    return this.authService.logout(sessionId);
+  }
+
   // MARK: - Test
   @Post('test-protected')
   @UseGuards(JwtAuthGuard)
@@ -38,13 +46,5 @@ export class AuthController {
       message: 'You are authenticated',
       user: request.user,
     };
-  }
-
-  // MARK: - Logout
-  @Post('logout')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
-  logout(@Body('sessionId') sessionId: string) {
-    return this.authService.logout(sessionId);
   }
 }

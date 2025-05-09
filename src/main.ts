@@ -5,10 +5,7 @@ import 'dotenv/config';
 import { LoggerService } from '@common/services/logger/service/logger-service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(
-    AppModule,
-    // { logger: new LoggerService(),}
-  );
+  const app = await NestFactory.create(AppModule);
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
