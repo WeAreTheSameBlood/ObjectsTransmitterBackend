@@ -27,10 +27,15 @@ export class ModelsRepository {
     return this.repo.find();
   }
 
+  // Find All by User
+  findAllByUser(userId: string): Promise<ModelFile[]> {
+    return this.repo.findBy({ owner: { id: userId } })
+  }
+
   // Find One by ID
-  findOne(id: string): Promise<ModelFile | null> {
+  findOneById(model_id: string): Promise<ModelFile | null> {
     return this.repo.findOne({
-      where: { id },
+      where: { id: model_id },
       relations: [
         'owner',
         'owner.addedModels'

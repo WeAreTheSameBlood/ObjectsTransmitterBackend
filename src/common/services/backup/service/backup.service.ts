@@ -6,6 +6,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { AppWriteStorageService, LoggerService } from '@services';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class BackupService {
@@ -14,6 +15,7 @@ export class BackupService {
   constructor(
     private readonly storage: AppWriteStorageService,
     private readonly logger: LoggerService,
+    private readonly dataSource: DataSource,
   ) {}
 
   // MARK: - Handle
@@ -26,6 +28,18 @@ export class BackupService {
   @Cron('*/5 * * * *') // 5 min
   async handleBackup() {
     try {
+      // Check if DB is empty
+      const result = await this.dataSource.query(
+        `SELECT COALESCE(SUM(n_live_tup),0) AS total
+         FROM pg_stat_user_tables
+         WHERE schemaname = 'public';`
+      );
+      const totalRows = Number(result[0].total);
+      if (totalRows === 0) {
+        this.logger.info('Database empty – skipping backup.');
+        return;
+      }
+
       // Generate dump to temp file
       const timestamp = Date.now();
       const dumpPath = join(tmpdir(), `db-backup-${timestamp}.sql`);
@@ -39,8 +53,8 @@ export class BackupService {
       if (checksum !== this.lastChecksum) {
         this.logger.info(`Database changed, uploading backup ${timestamp}.sql`);
 
-        const iso = new Date(timestamp).toISOString(); // "2025-05-09T11:13:00.037Z"
-        const safe = iso.replace(/[:\-]/g, '').replace(/\.\d+Z$/, ''); // "20250509T111300"
+        const iso = new Date(timestamp).toISOString();                  // "2025-05-09T11:13:00.037Z"
+        const safe = iso.replace(/[:\-]/g, '').replace(/\.\d+Z$/, '');  // "20250509T111300"
         const remoteKey = `db_backup_${safe}.sql`;
 
         await this.storage.uploadBackupFile(buf, remoteKey);

@@ -5,9 +5,9 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
-import { JwtStrategy } from './strategies/jwt.strategy';
 import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
 import { GuardsModule } from '@common/guards/guards.module';
+import { StrategiesModule } from '@src/common/strategies/jstrategies.module';
 
 @Module({
   imports: [
@@ -15,6 +15,7 @@ import { GuardsModule } from '@common/guards/guards.module';
     PassportModule,
     AppWriteModule,
     GuardsModule,
+    StrategiesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -24,8 +25,8 @@ import { GuardsModule } from '@common/guards/guards.module';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService],
   controllers: [AuthController],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

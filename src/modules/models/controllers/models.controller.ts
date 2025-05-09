@@ -1,28 +1,23 @@
 import {
-  Controller, Post, Get, Query,
+  Controller, Post, Get,
   UploadedFile, UseInterceptors, Body,
   HttpException, HttpStatus, HttpCode,
   Param,
 } from '@nestjs/common';
 import {
-  ApiOperation,
-  ApiOkResponse,
-  ApiParam,
-  ApiNotFoundResponse,
-  ApiConsumes,
-  ApiBody,
+  ApiOperation, ApiOkResponse,
+  ApiParam, ApiNotFoundResponse,
+  ApiConsumes, ApiBody,
   ApiCreatedResponse,
-  ApiBadRequestResponse,
-  ApiTags,
-  ApiExtraModels,
-  ApiBearerAuth,
+  ApiBadRequestResponse, ApiTags,
+  ApiExtraModels, ApiBearerAuth,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ModelsService } from '../services/models.service';
 import { ModelFile } from '../entities/storage/model-file';
 import { ModelGeneralInfoDTO, ModelAddDTO } from '../entities/dtos';
 import { ModelDetailsInfoDTO } from '../entities/dtos/model-detail-info.dto';
-import { UserGeneralInfoDTO } from '@src/modules/users/entities/dtos';
+import { UserGeneralInfoDTO } from '@modules/users/entities/dtos';
 import { AppWriteStorageService, LoggerService } from '@services';
 
 @ApiTags('models')
@@ -136,34 +131,61 @@ export class ModelsController {
   @ApiNotFoundResponse({ description: 'Model not found' })
   async getModelById(@Param('id') id: string): Promise<ModelDetailsInfoDTO> {
     this.logger.info('getModel by Id called', { id });
-    const object = await this.objectsService.findOne(id);
-    if (!object) {
+    const model = await this.objectsService.findOneById(id);
+    if (!model) {
       throw new HttpException('Model not found', HttpStatus.NOT_FOUND);
     }
 
     let ownerDto: UserGeneralInfoDTO | undefined;
-    if (object.owner) {
+    if (model.owner) {
       ownerDto = {
-        id: object.owner.id,
-        username: object.owner.username,
-        date_registration: object.owner.dateRegistration.toDateString(),
-        added_models_count: object.owner.addedModels?.length ?? 0,
+        id: model.owner.id,
+        username: model.owner.username,
+        date_registration: model.owner.dateRegistration.toDateString(),
+        added_models_count: model.owner.addedModels?.length ?? 0,
       };
     }
 
     const downloadUrl = this.storageService.getFileDownloadUrl(
-      object.model_file_url_key,
+      model.model_file_url_key,
     );
 
     const result: ModelDetailsInfoDTO = {
-      id: object.id,
-      name: object.name,
-      size: object.size,
+      id: model.id,
+      name: model.name,
+      size: model.size,
       size_type: 'Mb',
-      date_created: object.date_created.toDateString(),
+      date_created: model.date_created.toDateString(),
       owner: ownerDto,
       download_url: downloadUrl,
     };
     return result;
+  }
+
+  // MARK: - GET - Models by User ID
+  @Get('by_user/:userId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get all models for a specific user' })
+  @ApiParam({ name: 'userId', description: 'User identifier (UUID)' })
+  @ApiOkResponse({
+    description: 'Array of general model info for the user',
+    type: [ModelGeneralInfoDTO],
+  })
+  @ApiNotFoundResponse({ description: 'No models found for this user' })
+  async getModelsByUserId(
+    @Param('userId') userId: string,
+  ): Promise<ModelGeneralInfoDTO[]> {
+    this.logger.info('getModelsByUserId called', { userId });
+
+    const models = await this.objectsService.findAllByUser(userId);
+
+    const results: ModelGeneralInfoDTO[] = models.map((model) => ({
+      id: model.id,
+      name: model.name,
+      size: model.size,
+      size_type: "Mb"
+    }));
+    
+    return results;
   }
 }

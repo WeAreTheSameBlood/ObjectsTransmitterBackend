@@ -22,7 +22,7 @@ export class UsersService {
   }
 
   // MARK: - Find by Id
-  async findOne(id: string): Promise<User | null> {
-    return this.usersRepo.findOne(id);
+  async findOne(user_id: string): Promise<User | null> {
+    return this.usersRepo.findOne(user_id);
   }
 }

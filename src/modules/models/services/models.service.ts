@@ -45,8 +45,13 @@ export class ModelsService {
     return this.objectRepo.findAll();
   }
 
-  // MARK: - Find One
-  async findOne(id: string): Promise<ModelFile | null> {
-    return this.objectRepo.findOne(id);
+  // MARK: - Find One By ID
+  async findOneById(modelId: string): Promise<ModelFile | null> {
+    return this.objectRepo.findOneById(modelId);
+  }
+
+  // MARK: - Find One By ID
+  async findAllByUser(userId: string): Promise<ModelFile[]> {
+    return this.objectRepo.findAllByUser(userId);
   }
 }

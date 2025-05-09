@@ -29,9 +29,9 @@ export class UsersRepository {
   }
 
   // Find One by ID
-  findOne(id: string): Promise<User | null> {
+  findOne(user_id: string): Promise<User | null> {
     return this.repo.findOne({
-      where: { id },
+      where: { id: user_id },
       relations: ['addedModels', 'favoriteModels'],
     });
   }

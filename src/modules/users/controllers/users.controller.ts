@@ -10,11 +10,9 @@ import { UsersService } from '../services/users.service';
 import { UserAddDTO, UserGeneralInfoDTO, UserDetailedInfoDTO } from '../entities/dtos';
 import { JwtAuthGuard } from '@common/guards/jwt-auth/jwt-auth.guard';
 import {
-  ApiTags,
-  ApiOperation,
+  ApiTags, ApiOperation,
   ApiCreatedResponse,
-  ApiOkResponse,
-  ApiParam,
+  ApiOkResponse, ApiParam,
   ApiBearerAuth,
   ApiUnauthorizedResponse,
   ApiNotFoundResponse,
