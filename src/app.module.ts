@@ -8,6 +8,7 @@ import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
 import { LoggerModule } from '@common/services/logger/logger.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BackupModule } from '@src/common/services/backup/backup.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BackupModule } from '@src/common/services/backup/backup.module';
     LoggerModule,
     ScheduleModule.forRoot(),
     BackupModule,
+    HealthModule,
   ],
   controllers: [],
   providers: [],
