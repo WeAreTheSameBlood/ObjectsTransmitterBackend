@@ -19,13 +19,13 @@ export class BackupService {
   ) {}
 
   // MARK: - Handle
-  //       ┌───────────── sec      (0–59)
-  //       │ ┌─────────── mins     (0–59)
-  //       │ │ ┌───────── hours    (0–23)
-  //       │ │ │ ┌─────── days     (1–31)
-  //       │ │ │ │ ┌───── week day (0–6  Sun–Sat)
-  //       * * * * * 
-  @Cron('*/5 * * * *') // 5 min
+  //        ┌───────────── sec      (0–59)
+  //        │ ┌─────────── mins     (0–59)
+  //        │ │ ┌───────── hours    (0–23)
+  //        │ │ │ ┌─────── days     (1–31)
+  //        │ │ │ │ ┌───── week day (0–6  Sun–Sat)
+  //        * * * * * 
+  @Cron('*/15 * * * *') // 15 min
   async handleBackup() {
     try {
       // Check if DB is empty
