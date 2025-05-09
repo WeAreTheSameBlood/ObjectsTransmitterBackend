@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import 'dotenv/config';
+import { LoggerService } from '@common/services/logger/service/logger-service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(
+    AppModule,
+    // { logger: new LoggerService(),}
+  );
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',

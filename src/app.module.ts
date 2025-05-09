@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
+import { LoggerModule } from './common/services/logger/logger.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
     ObjectsModule,
     UsersModule,
     AuthModule,
-    AppWriteModule
+    AppWriteModule,
+    LoggerModule
   ],
   controllers: [],
   providers: [],

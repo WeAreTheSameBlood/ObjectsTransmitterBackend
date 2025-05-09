@@ -10,6 +10,7 @@ import { ObjectGeneralInfoDTO, ObjectsAddDTO } from '../entities/dtos';
 import { ObjectDetailsInfoDTO } from '../entities/dtos/object-detail-info.dto';
 import { UserGeneralInfoDTO } from '@src/modules/users/entities/dtos';
 import { AppWriteStorageService } from '@src/common/services/appwrite';
+import { LoggerService } from '@common/services/logger/service/logger-service';
 
 @Controller({ path: 'models', version: '1' })
 export class ObjectsController {
@@ -17,6 +18,7 @@ export class ObjectsController {
   constructor(
     private readonly objectsService: ObjectsService,
     private readonly storageService: AppWriteStorageService,
+    private readonly logger: LoggerService,
   ) {}
 
   // MARK: - POST
@@ -27,17 +29,26 @@ export class ObjectsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() objectDto: ObjectsAddDTO,
   ): Promise<{ id: string }> {
+    this.logger.info('uploadModel called', { name: objectDto.name, fileName: file?.originalname });
+    
     if (!file || !objectDto.name) {
+      this.logger.error('uploadModel missing file or name', {
+        fileExist: file != null,
+        name: objectDto.name
+      });
       throw new HttpException(
         'Missing file or name',
         HttpStatus.BAD_REQUEST
       );
     }
-    
-    // Create new ObjectFile
-    const object: ObjectFile = await this.objectsService.createObject(file, objectDto);
-
-    return { id: object.id };
+    try {
+      const object: ObjectFile = await this.objectsService.createObject(file, objectDto);
+      this.logger.info('uploadModel succeeded', { objectId: object.id });
+      return { id: object.id };
+    } catch (error) {
+      this.logger.error('uploadModel failed', error);
+      throw error;
+    }
   }
 
   // MARK: - GET
@@ -46,14 +57,20 @@ export class ObjectsController {
   async getModels(
     @Query('id') id?: string
   ): Promise<any> {
-    return id
-      ? this.getModelById(id)
-      : this.getAllModels();
+    try {
+      return id
+        ? this.getModelById(id)
+        : this.getAllModels();
+    } catch (error) {
+      this.logger.error('getModels failed', error);
+      throw error;
+    }
   }
 
   // MARK: - Private
   private async getAllModels(
   ): Promise<ObjectGeneralInfoDTO[]> {
+    this.logger.info('getAllModels called');
     const objectFiles = await this.objectsService.findAll();
     return objectFiles.map((file) => ({
         id:         file.id,
@@ -66,6 +83,7 @@ export class ObjectsController {
   private async getModelById(
     id: string
   ): Promise<ObjectDetailsInfoDTO> {
+    this.logger.info('getModels called', { id });
     const object = await this.objectsService.findOne(id);
     if (!object) {
       throw new HttpException(
