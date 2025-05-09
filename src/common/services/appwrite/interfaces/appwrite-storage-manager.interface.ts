@@ -10,4 +10,11 @@ export interface IAppWriteStorageManager {
     bucketId: string,
     fileId: string
   ): string;
+
+  // Backup Data
+  uploadBackupFile(
+    data: Buffer,
+    bucketId: string,
+    remoteKey: string,
+  ): Promise<string>;
 }

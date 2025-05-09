@@ -5,18 +5,20 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
-import { LoggerModule } from './common/services/logger/logger.module';
+import { LoggerModule } from '@common/services/logger/logger.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BackupModule } from '@common/backup/backup.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'db',
-      port: 5432,
-      username: 'postgres',
-      password: 'password',
-      database: 'objects_transmitter_db',
+      type:     'postgres',
+      host:     process.env.POSTGRES_HOST!,
+      port:     process.env.POSTGRES_PORT! as unknown as number,
+      username: process.env.POSTGRES_USER!,
+      password: process.env.POSTGRES_PASSWORD!,
+      database: process.env.POSTGRES_DATABASE!,
       autoLoadEntities: true,
       synchronize: true,
     }),
@@ -24,7 +26,9 @@ import { LoggerModule } from './common/services/logger/logger.module';
     UsersModule,
     AuthModule,
     AppWriteModule,
-    LoggerModule
+    LoggerModule,
+    ScheduleModule.forRoot(),
+    BackupModule,
   ],
   controllers: [],
   providers: [],

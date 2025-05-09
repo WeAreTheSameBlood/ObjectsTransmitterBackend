@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import 'dotenv/config';
-import { LoggerService } from '@common/services/logger/service/logger-service';
+import { webcrypto as crypto } from 'crypto';
+(global as any).crypto = crypto;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

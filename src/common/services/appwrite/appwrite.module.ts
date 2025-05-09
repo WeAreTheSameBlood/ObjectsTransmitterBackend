@@ -14,8 +14,9 @@ import {
     AppWriteStorageService,
   ],
   exports: [
+    AppWriteBaseClientService,
     AppWriteStorageService,
-    AppWriteAuthService
+    AppWriteAuthService,
   ],
 })
 export class AppWriteModule { }

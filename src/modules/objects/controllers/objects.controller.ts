@@ -103,7 +103,6 @@ export class ObjectsController {
      }
 
     const downloadUrl = this.storageService.getFileDownloadUrl(
-      process.env.APPWRITE_BUCKET_ID!,
       object.model_file_url_key,
     );
 
