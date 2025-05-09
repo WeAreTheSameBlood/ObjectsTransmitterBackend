@@ -4,7 +4,7 @@ import { User } from './entities/storage/User'
 import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
 import { UsersRepository } from './repositories/users.repository';
-import { GuardsModule } from '@src/common/guards/guards.module';
+import { GuardsModule } from '@common/guards/guards.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],

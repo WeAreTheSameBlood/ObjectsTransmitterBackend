@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { BackupService } from './service/service.service';
+import { BackupService } from './service/backup.service';
 import { AppWriteStorageService } from '@services/appwrite';
-import { AppWriteModule } from '../services/appwrite/appwrite.module';
+import { AppWriteModule } from '../appwrite/appwrite.module';
 
 @Module({
   imports:[AppWriteModule],

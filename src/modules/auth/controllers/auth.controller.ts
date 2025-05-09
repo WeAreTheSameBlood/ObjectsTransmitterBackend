@@ -14,7 +14,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   // MARK: - SignIn
-  @Post('signin')
+  @Post('sign_in')
   @HttpCode(HttpStatus.CREATED)
   async singIn(
     @Body() dto: AuthSingInDTO,

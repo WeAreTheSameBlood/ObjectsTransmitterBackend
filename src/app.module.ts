@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ObjectsModule } from '@modules/objects/objects.module';
+import { ModelsModule } from '@src/modules/models/models.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
 import { LoggerModule } from '@common/services/logger/logger.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { BackupModule } from '@common/backup/backup.module';
+import { BackupModule } from '@src/common/services/backup/backup.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { BackupModule } from '@common/backup/backup.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    ObjectsModule,
+    ModelsModule,
     UsersModule,
     AuthModule,
     AppWriteModule,

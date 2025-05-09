@@ -5,8 +5,8 @@ import {
 } from 'typeorm';
 import { User } from '@modules/users/entities/storage/User';
 
-@Entity('object_files')
-export class ObjectFile {
+@Entity('model_files')
+export class ModelFile {
   // Properties
   @PrimaryGeneratedColumn('uuid')
   id: string;

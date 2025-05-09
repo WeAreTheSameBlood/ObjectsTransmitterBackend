@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ObjectFile } from '@modules/objects/entities/storage/ObjectFile';
-import { AppWriteStorageService } from '@services/appwrite';
-import { ObjectsRepository } from '../repositories/objects.repository';
-import { ObjectsAddDTO } from '../entities/dtos';
+import { ModelFile } from "../entities/storage/model-file";
+import { AppWriteStorageService } from '@services';
+import { ModelsRepository } from '../repositories/models.repository';
+import { ModelAddDTO } from '../entities/dtos';
 import { UsersRepository } from '@modules/users/repositories/users.repository';
 
 @Injectable()
-export class ObjectsService {
+export class ModelsService {
   // MARK: - Init
   constructor(
-    private objectRepo: ObjectsRepository,
+    private objectRepo: ModelsRepository,
     private usersRepo: UsersRepository,
     private storageService: AppWriteStorageService,
   ) {}
 
-  // MARK: - Create
-  async createObject(
+  // MARK: - Add New
+  async addNewModel(
     file: Express.Multer.File,
-    objectDto: ObjectsAddDTO,
-  ): Promise<ObjectFile> {
+    objectDto: ModelAddDTO,
+  ): Promise<ModelFile> {
     const fileId = await this.storageService.uploadModelFile(file);
     const sizeInMb = file.size / (1024 * 1024);     // byte --> kb --> Mb
 
@@ -41,12 +41,12 @@ export class ObjectsService {
   }
 
   // MARK: - Find All
-  async findAll(): Promise<ObjectFile[]> {
+  async findAll(): Promise<ModelFile[]> {
     return this.objectRepo.findAll();
   }
 
   // MARK: - Find One
-  async findOne(id: string): Promise<ObjectFile | null> {
+  async findOne(id: string): Promise<ModelFile | null> {
     return this.objectRepo.findOne(id);
   }
 }

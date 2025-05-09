@@ -10,7 +10,7 @@ export class UsersService {
   ) {}
 
   // MARK: - Create
-  async create(data: Partial<User>): Promise<String> {
+  async create(data: Partial<User>): Promise<string> {
     const user = this.usersRepo.create(data);
     const newUser = this.usersRepo.save(user);
     return (await newUser).id

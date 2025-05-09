@@ -14,7 +14,8 @@
       "@src/*":       ["src/*"],
       "@modules/*":   ["src/modules/*"],
       "@common/*":    ["src/common/*"],
-      "@services/*":  ["src/common/services/*"]
+      "@services/*":  ["src/common/services/*"],
+      "@services":    ["src/common/services"]
     },
     "incremental": true,
     "skipLibCheck": true,
