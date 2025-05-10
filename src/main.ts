@@ -1,10 +1,19 @@
+import 'dotenv/config';
+import { randomUUID, randomBytes } from 'crypto';
+
+if (typeof globalThis.crypto === 'undefined') {
+  Object.assign(globalThis, {
+    crypto: {
+      randomUUID,
+      getRandomValues: (buf: Uint8Array) => buf.set(randomBytes(buf.length)),
+    },
+  });
+}
+
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
-import 'dotenv/config';
-import { webcrypto as crypto } from 'crypto';
-(global as any).crypto = crypto;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
