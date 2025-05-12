@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Account } from 'node-appwrite';
+import { Account, Users } from 'node-appwrite';
 import { AppWriteBaseClientService } from '../services/appwrite-base-client.service';
 import { IAppWriteAuthManager } from '../interfaces/appwrite-auth-manager.interface';
 
@@ -17,7 +17,7 @@ export class AppWriteAuthService implements IAppWriteAuthManager {
   public async createUser(
     email: string,
     password: string,
-    name: string
+    username: string
   ): Promise<{
     userId: string;
     email: string
@@ -26,7 +26,7 @@ export class AppWriteAuthService implements IAppWriteAuthManager {
       'unique()',
       email,
       password,
-      name
+      username,
     );
     return {
       userId: user.$id,
@@ -57,4 +57,15 @@ export class AppWriteAuthService implements IAppWriteAuthManager {
   ): Promise<void> {
     await this.account.deleteSession(sessionId);
   }
+
+    // MARK: - Check Username
+    public async isUsernameUnique(
+      username: string
+    ): Promise<boolean> {
+      const users = new Users(this.clientService.client);
+      const response = await users.list([
+        `equal("name","${username}")`
+      ]);
+      return response.total === 0;
+    }
 }

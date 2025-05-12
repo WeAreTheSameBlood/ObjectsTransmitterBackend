@@ -25,25 +25,6 @@ export class UsersController {
   // MARK: - Init
   constructor(private readonly usersService: UsersService) {}
 
-  // MARK: - POST - Create New
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiCreatedResponse({
-    description: 'User created',
-    schema: {
-      type: 'object',
-      properties: {
-        user_id: { type: 'string', description: 'UUID of the created user' },
-      },
-    },
-  })
-  @ApiBadRequestResponse({ description: 'Invalid request payload' })
-  async create(@Body() userDto: UserAddDTO): Promise<{ user_id: string }> {
-    const resultUserId = await this.usersService.create(userDto);
-    return { user_id: resultUserId };
-  }
-
   // MARK: - Find All
   @Get()
   @HttpCode(HttpStatus.OK)

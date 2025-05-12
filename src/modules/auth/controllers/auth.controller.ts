@@ -2,7 +2,10 @@ import {
   Controller, Body,
   Post,
   HttpCode, HttpStatus,
-  Req, UseGuards, Request
+  Req, UseGuards, Request,
+  Get,
+  Headers,
+  HttpException,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthSingInDTO, AuthLoginDTO } from '../entities/dtos';
@@ -14,18 +17,20 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   // MARK: - SignIn
-  @Post('sign_in')
+  @Post('sign_up')
   @HttpCode(HttpStatus.CREATED)
-  async singIn(
+  async singUp(
     @Body() dto: AuthSingInDTO,
   ): Promise<{ userId: string; email: string }> {
-    return this.authService.singIn(dto);
+    return this.authService.singUp(dto);
   }
 
   // MARK: - Login
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() dto: AuthLoginDTO) {
+  async login(
+    @Body() dto: AuthLoginDTO
+  ): Promise<{ accessToken: string }> {
     return this.authService.login(dto);
   }
 
@@ -33,8 +38,24 @@ export class AuthController {
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  logout(@Body('sessionId') sessionId: string) {
+  logout(
+    @Body('sessionId') sessionId: string
+  ) {
     return this.authService.logout(sessionId);
+  }
+
+  @Get('regenerate_token')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async regenerateToken(
+    @Headers('authorization') authHeader: string,
+  ): Promise<{ accessToken: string }> {
+    try {
+      const token = authHeader?.split(' ')[1];
+      return this.authService.regenerateToken(token);
+    } catch {
+      throw new HttpException('Invalid token in header', HttpStatus.BAD_REQUEST);
+    }
   }
 
   // MARK: - Test

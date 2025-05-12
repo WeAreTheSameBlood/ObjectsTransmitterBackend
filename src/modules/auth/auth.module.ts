@@ -8,6 +8,8 @@ import { AuthController } from './controllers/auth.controller';
 import { AppWriteModule } from '@common/services/appwrite/appwrite.module';
 import { GuardsModule } from '@common/guards/guards.module';
 import { StrategiesModule } from '@src/common/strategies/jstrategies.module';
+import { UsersService } from '../users/services/users.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -16,16 +18,22 @@ import { StrategiesModule } from '@src/common/strategies/jstrategies.module';
     AppWriteModule,
     GuardsModule,
     StrategiesModule,
+    UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (cfg: ConfigService) => ({
-        secret: cfg.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: cfg.get<string>('JWT_EXPIRES_IN') },
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: config.get<string>('JWT_EXPIRES_IN')
+        },
       }),
     }),
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    UsersService
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

@@ -10,4 +10,7 @@ export class AuthSingInDTO {
 
   @IsString()
   username: string;
+
+  @IsString()
+  name?: string;
 }
