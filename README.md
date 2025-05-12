@@ -72,8 +72,6 @@ It uses AppWrite for storage and authentication, PostgreSQL for persistent data,
 
 ### Users
 
-> Note: `POST /v1/users` is deprecated—use the Auth flow instead.
-
 - `GET    /v1/users`  
   List all users (GeneralInfoDTO).
 
@@ -112,13 +110,13 @@ It uses AppWrite for storage and authentication, PostgreSQL for persistent data,
     curl http://localhost:3000/v1/models
     ```
 
+---
 
 ## 📖 Swagger Documentation
 
 After starting the app, open:
-
-    ```bash
-    http://localhost:3000/api
-    ```
+```bash
+http://localhost:3000/api/docs
+```
 
 to view interactive API docs with request/response schemas.
