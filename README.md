@@ -45,44 +45,38 @@ It uses AppWrite for storage and authentication, PostgreSQL for persistent data,
 ### Authentication
 
 - `POST /v1/auth/signup`  
-  Register a new user, create AppWrite account & session, return JWT.
+  Register a new user, create AppWrite account & session, return JWT
 
 - `POST /v1/auth/login`  
-  Login existing user via AppWrite, return JWT & session ID.
+  Login existing user via AppWrite, return JWT & session ID
 
 - `POST /v1/auth/refresh`  
-  If access token has <15 min left, return a new JWT.
+  Check current JWT and return a new token
 
 - `POST /v1/auth/logout`  
-  Invalidate the AppWrite session.
+  Invalidate the AppWrite session
 
 ### Models
 
+- `POST /v1/models`  
+  Upload a new model file (multipart/form-data)
+
 - `GET  /v1/models`  
-  Returns list of models (GeneralInfoDTO).
+  Returns list of models with general data
 
 - `GET  /v1/models/:id`  
-  Returns detailed info for one model (ObjectDetailsDTO).
+  Returns detailed info for one model with details data
 
-- `POST /v1/models`  
-  Upload a new model file (multipart/form-data).
-
-- `DELETE /v1/models/:id`  
-  Delete a model (removes from AppWrite & database).
+- `GET /v1/models/by_user/:user_id`  
+  Return list of models for specific User
 
 ### Users
 
 - `GET    /v1/users`  
-  List all users (GeneralInfoDTO).
+  List all users with general data
 
 - `GET    /v1/users/:id`  
-  Get one user’s profile (detailed).
-
-- `PATCH  /v1/users/:id`  
-  Update username or name.
-
-- `DELETE /v1/users/:id`  
-  Delete a user (models remain, owner set to null).
+  Get one user’s profile (detailed)
 
 ---
 
