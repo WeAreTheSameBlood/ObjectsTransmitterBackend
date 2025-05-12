@@ -3,6 +3,7 @@ import {
   UploadedFile, UseInterceptors, Body,
   HttpException, HttpStatus, HttpCode,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiOperation, ApiOkResponse,
@@ -11,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiBadRequestResponse, ApiTags,
   ApiExtraModels, ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ModelsService } from '../services/models.service';
@@ -19,6 +21,7 @@ import { ModelGeneralInfoDTO, ModelAddDTO } from '../entities/dtos';
 import { ModelDetailsInfoDTO } from '../entities/dtos/model-detail-info.dto';
 import { UserGeneralInfoDTO } from '@modules/users/entities/dtos';
 import { AppWriteStorageService, LoggerService } from '@services';
+import { JwtAuthGuard } from '@common/guards/jwt-auth/jwt-auth.guard';
 
 @ApiTags('models')
 @ApiBearerAuth('access-tocken')
@@ -27,7 +30,7 @@ import { AppWriteStorageService, LoggerService } from '@services';
 export class ModelsController {
   // MARK: - Init
   constructor(
-    private readonly objectsService: ModelsService,
+    private readonly modelsService: ModelsService,
     private readonly storageService: AppWriteStorageService,
     private readonly logger: LoggerService,
   ) {}
@@ -83,7 +86,7 @@ export class ModelsController {
       throw new HttpException('Missing file or name', HttpStatus.BAD_REQUEST);
     }
     try {
-      const object: ModelFile = await this.objectsService.addNewModel(
+      const object: ModelFile = await this.modelsService.addNewModel(
         file,
         objectDto,
       );
@@ -106,7 +109,7 @@ export class ModelsController {
   async getModels(): Promise<ModelGeneralInfoDTO[]> {
     try {
       this.logger.info('getAllModels called');
-      const objectFiles = await this.objectsService.findAll();
+      const objectFiles = await this.modelsService.findAll();
       return objectFiles.map((file) => ({
         id: file.id,
         name: file.name,
@@ -131,7 +134,7 @@ export class ModelsController {
   @ApiNotFoundResponse({ description: 'Model not found' })
   async getModelById(@Param('id') id: string): Promise<ModelDetailsInfoDTO> {
     this.logger.info('getModel by Id called', { id });
-    const model = await this.objectsService.findOneById(id);
+    const model = await this.modelsService.findOneById(id);
     if (!model) {
       throw new HttpException('Model not found', HttpStatus.NOT_FOUND);
     }
@@ -177,15 +180,39 @@ export class ModelsController {
   ): Promise<ModelGeneralInfoDTO[]> {
     this.logger.info('getModelsByUserId called', { userId });
 
-    const models = await this.objectsService.findAllByUser(userId);
+    const models = await this.modelsService.findAllByUser(userId);
 
     const results: ModelGeneralInfoDTO[] = models.map((model) => ({
       id: model.id,
       name: model.name,
       size: model.size,
-      size_type: "Mb"
+      size_type: 'Mb',
     }));
-    
+
     return results;
+  }
+
+  // MARK: - POST - Delete Model
+  @Post(':id')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({ description: 'Authentication required' })
+  @ApiOperation({ summary: 'Delete model by model id' })
+  @ApiOkResponse({
+    description: 'Boolean response for operations',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean', example: true },
+      },
+    },
+  })
+  @ApiNotFoundResponse({ description: 'Model with entered Id not found' })
+  async deleteModel(
+    @Param('id') modelId: string,
+  ): Promise<{ success: boolean }> {
+    this.logger.info('deleteModel called', { modelId });
+    return await this.modelsService.deleteModel(modelId);
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Account, Users } from 'node-appwrite';
+import { Account, Users, Query } from 'node-appwrite';
 import { AppWriteBaseClientService } from '../services/appwrite-base-client.service';
 import { IAppWriteAuthManager } from '../interfaces/appwrite-auth-manager.interface';
 
@@ -17,10 +17,10 @@ export class AppWriteAuthService implements IAppWriteAuthManager {
   public async createUser(
     email: string,
     password: string,
-    username: string
+    username: string,
   ): Promise<{
     userId: string;
-    email: string
+    email: string;
   }> {
     const user = await this.account.create(
       'unique()',
@@ -30,42 +30,39 @@ export class AppWriteAuthService implements IAppWriteAuthManager {
     );
     return {
       userId: user.$id,
-      email: user.email
+      email: user.email,
     };
   }
 
   // MARK: - Create Session
- public async createSession(
-    email: string, password: string
- ): Promise<{
-     userId: string,
-     sessionId: string
- }> {
-     const session = await this.account.createEmailPasswordSession(
-         email,
-         password
-     );
+  public async createSession(
+    email: string,
+    password: string,
+  ): Promise<{
+    userId: string;
+    sessionId: string;
+  }> {
+    const session = await this.account.createEmailPasswordSession(
+      email,
+      password,
+    );
     return {
-        userId: session.userId,
-        sessionId: session.$id
+      userId: session.userId,
+      sessionId: session.$id,
     };
   }
 
   // MARK: - Delete Session
-  public async deleteSession(
-    sessionId: string
-  ): Promise<void> {
+  public async deleteSession(sessionId: string): Promise<void> {
     await this.account.deleteSession(sessionId);
   }
 
-    // MARK: - Check Username
-    public async isUsernameUnique(
-      username: string
-    ): Promise<boolean> {
-      const users = new Users(this.clientService.client);
-      const response = await users.list([
-        `equal("name","${username}")`
-      ]);
-      return response.total === 0;
-    }
+  // MARK: - Check Username
+  public async isUsernameUnique(username: string): Promise<boolean> {
+    const users = new Users(this.clientService.client);
+    const response = await users.list([
+      Query.equal('name', username),
+    ]);
+    return response.total === 0;
+  }
 }

@@ -10,7 +10,7 @@ import { UsersRepository } from '@modules/users/repositories/users.repository';
 export class ModelsService {
   // MARK: - Init
   constructor(
-    private objectRepo: ModelsRepository,
+    private modelsRepo: ModelsRepository,
     private usersRepo: UsersRepository,
     private storageService: AppWriteStorageService,
   ) {}
@@ -23,7 +23,7 @@ export class ModelsService {
     const fileId = await this.storageService.uploadModelFile(file);
     const sizeInMb = file.size / (1024 * 1024);     // byte --> kb --> Mb
 
-    const obj = this.objectRepo.create({
+    const obj = this.modelsRepo.create({
       name: objectDto.name,
       model_file_url_key: fileId,
       size: sizeInMb,
@@ -37,21 +37,38 @@ export class ModelsService {
       obj.owner = owner;
     }
 
-    return this.objectRepo.save(obj);
+    return this.modelsRepo.save(obj);
   }
 
   // MARK: - Find All
   async findAll(): Promise<ModelFile[]> {
-    return this.objectRepo.findAll();
+    return this.modelsRepo.findAll();
   }
 
   // MARK: - Find One By ID
   async findOneById(modelId: string): Promise<ModelFile | null> {
-    return this.objectRepo.findOneById(modelId);
+    return this.modelsRepo.findOneById(modelId);
   }
 
   // MARK: - Find One By ID
   async findAllByUser(userId: string): Promise<ModelFile[]> {
-    return this.objectRepo.findAllByUser(userId);
+    return this.modelsRepo.findAllByUser(userId);
+  }
+
+  // MARK: - Delete
+  async deleteModel(
+    modelId: string
+  ): Promise<{ success: boolean }> {
+    const model = await this.modelsRepo.findOneById(modelId);
+    if (model) {
+      const resultDB = await this.modelsRepo.delete(modelId);
+      await this.storageService.deleteFile(model.model_file_url_key);
+      return { success: resultDB }
+    } else {
+      throw new HttpException(
+        'Model with entered Id not found',
+        HttpStatus.NOT_FOUND
+      )
+    }
   }
 }

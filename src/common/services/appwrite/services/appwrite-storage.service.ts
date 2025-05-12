@@ -7,6 +7,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { fileFromPath } from 'formdata-node/file-from-path';
 import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from "@common/services/logger/service/logger-service";
 
 @Injectable()
 export class AppWriteStorageService implements IAppWriteStorageManager {
@@ -16,7 +17,10 @@ export class AppWriteStorageService implements IAppWriteStorageManager {
   private backupBucketId: string = process.env.APPWRITE_BACKUP_BUCKET_ID!;
 
   // MARK: - Init
-  constructor(private clientService: AppWriteBaseClientService) {
+  constructor(
+    private clientService: AppWriteBaseClientService,
+    private readonly logger: LoggerService
+  ) {
     this.storage = new Storage(this.clientService.client);
   }
 
@@ -54,6 +58,23 @@ export class AppWriteStorageService implements IAppWriteStorageManager {
     return `${endpoint}/storage/buckets/${this.bucketId}/files/${fileId}/download?project=${project}`;
   }
 
+  // MARK: - Delete
+  public async deleteFile(
+    fileId: string
+  ): Promise<boolean> {
+    try {
+      await this.storage.deleteFile(this.bucketId, fileId);
+      this.logger.info('File deleted form Storage', { fileId: fileId });
+      return true;
+    } catch (error) {
+      this.logger.error("File didn't deleted form Storage", {
+        fileId: fileId,
+        error,
+      });
+      return false;
+    }
+  }
+
   // MARK: - Backup Data
   public async uploadBackupFile(
     data: Buffer,
@@ -66,7 +87,7 @@ export class AppWriteStorageService implements IAppWriteStorageManager {
     const result = await this.storage.createFile(
       this.backupBucketId,
       remoteKey,
-      file as any
+      file as any,
     );
 
     await fs.unlink(tmp);

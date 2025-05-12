@@ -70,6 +70,9 @@ It uses AppWrite for storage and authentication, PostgreSQL for persistent data,
 - `GET /v1/models/by_user/:user_id`  
   Return list of models for specific User
 
+- `POST /v1/models/:id`  
+  Deleting model by id and return result
+
 ### Users
 
 - `GET    /v1/users`  

@@ -42,4 +42,13 @@ export class ModelsRepository {
       ]
     });
   }
+
+  // Delete by ID
+  async delete(modelId: string): Promise<boolean> {
+    const result = await this.repo.delete({ id: modelId });
+    if (result.affected) {
+      return result.affected > 0
+    }
+    return false;
+  }
 }
