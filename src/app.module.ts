@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ModelsModule } from '@modules/models/models.module';
+import { StoreItemsModule } from '@src/modules/store-items/store-items.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
@@ -10,7 +10,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { BackupModule } from '@common/services/backup/backup.module';
 import { HealthModule } from './modules/health/health.module';
 
-const featuresModules = [AuthModule, UsersModule, ModelsModule, HealthModule];
+const featuresModules = [AuthModule, StoreItemsModule, HealthModule];
 const internalModules = [AppWriteModule, LoggerModule, BackupModule];
 
 @Module({

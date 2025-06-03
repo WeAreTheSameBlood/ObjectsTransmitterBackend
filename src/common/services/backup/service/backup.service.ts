@@ -83,20 +83,27 @@ export class BackupService {
         password: string,
         dbName: string;
 
-      if (process.env.DATABASE_URL) {
-        const url = new URL(process.env.DATABASE_URL);
-        host = url.hostname;
-        port = url.port || '5432';
-        user = url.username;
-        password = url.password;
-        dbName = url.pathname.slice(1);
-      } else {
-        host = process.env.POSTGRES_HOST!;
-        port = process.env.POSTGRES_PORT!;
-        user = process.env.POSTGRES_USER!;
-        password = process.env.POSTGRES_PASSWORD!;
-        dbName = process.env.POSTGRES_DATABASE!;
-      }
+      // if (process.env.DATABASE_URL) {
+      //   const url = new URL(process.env.DATABASE_URL);
+      //   host = url.hostname;
+      //   port = url.port || '5432';
+      //   user = url.username;
+      //   password = url.password;
+      //   dbName = url.pathname.slice(1);
+      // } else {
+      //   host = process.env.POSTGRES_HOST!;
+      //   port = process.env.POSTGRES_PORT!;
+      //   user = process.env.POSTGRES_USER!;
+      //   password = process.env.POSTGRES_PASSWORD!;
+      //   dbName = process.env.POSTGRES_DATABASE!;
+      // }
+
+      const url = new URL(process.env.DATABASE_URL!);
+      host = url.hostname;
+      port = url.port || '5432';
+      user = url.username;
+      password = url.password;
+      dbName = url.pathname.slice(1);
 
       const args = [
         '--clean',

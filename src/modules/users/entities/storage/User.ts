@@ -4,7 +4,7 @@ import {
   Column, CreateDateColumn,
   OneToMany, ManyToMany, JoinTable,
 } from 'typeorm';
-import { ModelFile } from '@src/modules/models/entities/storage/model-file';
+import { StoreItem } from '@src/modules/store-items/entities/storage/store-item';
 
 @Entity('users')
 export class User {
@@ -22,12 +22,12 @@ export class User {
   dateRegistration: Date;
 
   // Related
-  @OneToMany(() => ModelFile, (file) => file.owner, {
+  @OneToMany(() => StoreItem, (file) => file.media, {
     cascade: ['insert', 'update'],
   })
-  addedModels: ModelFile[];
+  addedModels: StoreItem[];
 
-  @ManyToMany(() => ModelFile, { cascade: true })
+  @ManyToMany(() => StoreItem, { cascade: true })
   @JoinTable({
     name: 'user_favorite_models',
     joinColumn: {
@@ -39,5 +39,5 @@ export class User {
       referencedColumnName: 'id',
     },
   })
-  favoriteModels: ModelFile[];
+  favoriteModels: StoreItem[];
 }
