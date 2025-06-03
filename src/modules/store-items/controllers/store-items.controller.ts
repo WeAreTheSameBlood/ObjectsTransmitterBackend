@@ -20,7 +20,6 @@ import { StoreItemsService } from '../services/models.service';
 import { StoreItem } from '../entities/storage/store-item';
 import { StoreItemGeneralInfoDTO, StoreItemAddDTO } from '../entities/dtos';
 import { StoreItemDetailsInfoDTO } from '../entities/dtos/store-item-detail-info.dto';
-import { UserGeneralInfoDTO } from '@modules/users/entities/dtos';
 import { AppWriteStorageService, LoggerService } from '@services';
 import { JwtAuthGuard } from '@common/guards/jwt-auth/jwt-auth.guard';
 
@@ -86,123 +85,71 @@ export class StoreItemsController {
     }
   }
 
-  // MARK: - GET - All Models
-  // @Get()
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOperation({ summary: 'Get all models' })
-  // @ApiOkResponse({
-  //   description: 'Array of general model info',
-  //   type: [StoreItemGeneralInfoDTO],
-  // })
-  // async getModels(): Promise<StoreItemGeneralInfoDTO[]> {
-  //   try {
-  //     this.logger.info('getAllModels called');
-  //     const objectFiles = await this.storeItemsService.findAll();
-  //     return objectFiles.map((file) => ({
-  //       id: file.id,
-  //       name: file.title,
-  //       size: file.size,
-  //       size_type: 'Mb',
-  //     }));
-  //   } catch (error) {
-  //     this.logger.error('getModels failed', error);
-  //     throw error;
-  //   }
-  // }
+  // MARK: - GET - All Items
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getStoreItems(): Promise<StoreItemGeneralInfoDTO[]> {
+    try {
+      this.logger.info('getStoreItems called');
 
-  // // MARK: - GET - Model By ID
-  // @Get(':id')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOperation({ summary: 'Get model details by ID' })
-  // @ApiParam({ name: 'id', description: 'Model identifier (UUID)' })
-  // @ApiOkResponse({
-  //   description: 'Model details',
-  //   type: StoreItemDetailsInfoDTO,
-  // })
-  // @ApiNotFoundResponse({ description: 'Model not found' })
-  // async getModelById(
-  //   @Param('id') id: string,
-  // ): Promise<StoreItemDetailsInfoDTO> {
-  //   this.logger.info('getModel by Id called', { id });
-  //   const model = await this.storeItemsService.findOneById(id);
-  //   if (!model) {
-  //     throw new HttpException('Model not found', HttpStatus.NOT_FOUND);
-  //   }
+      const storeItems = await this.storeItemsService.findAll();
+      return storeItems.map((item) => ({
+        id:     item.id,
+        title:  item.title,
+        brand:  item.brand,
+        amount: item.amount
+      }));
+    } catch (error) {
+      this.logger.error('getStoreItems failed', error);
+      throw error;
+    }
+  }
 
-  //   let ownerDto: UserGeneralInfoDTO | undefined;
-  //   if (model.owner) {
-  //     ownerDto = {
-  //       id: model.owner.id,
-  //       username: model.owner.username,
-  //       date_registration: model.owner.dateRegistration.toDateString(),
-  //       added_models_count: model.owner.addedModels?.length ?? 0,
-  //     };
-  //   }
+  // MARK: - GET - Model By ID
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getStoreItemById(
+    @Param('id') id: string,
+  ): Promise<StoreItemDetailsInfoDTO> {
+    this.logger.info('getStoreItemById by Id called', { id });
 
-  //   const downloadUrl = this.storageService.getFileDownloadUrl(
-  //     model.model_file_url_key,
-  //   );
+    const storeItem = await this.storeItemsService.findOneById(id);
+    if (!storeItem) {
+      throw new HttpException('Store Item not found', HttpStatus.NOT_FOUND);
+    }
 
-  //   const result: StoreItemDetailsInfoDTO = {
-  //     id: model.id,
-  //     name: model.title,
-  //     size: model.size,
-  //     size_type: 'Mb',
-  //     date_created: model.date_created.toDateString(),
-  //     owner: ownerDto,
-  //     download_url: downloadUrl,
-  //   };
-  //   return result;
-  // }
+    const barcodeFileUrlKey = this.storageService.getFileDownloadUrl(
+      storeItem.barcodeFileUrlKey,
+    );
 
-  // // MARK: - GET - Models by User ID
-  // @Get('by_user/:userId')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOperation({ summary: 'Get all models for a specific user' })
-  // @ApiParam({ name: 'userId', description: 'User identifier (UUID)' })
-  // @ApiOkResponse({
-  //   description: 'Array of general model info for the user',
-  //   type: [StoreItemGeneralInfoDTO],
-  // })
-  // @ApiNotFoundResponse({ description: 'No models found for this user' })
-  // async getModelsByUserId(
-  //   @Param('userId') userId: string,
-  // ): Promise<StoreItemGeneralInfoDTO[]> {
-  //   this.logger.info('getModelsByUserId called', { userId });
+    const modelFileUrlKey = this.storageService.getFileDownloadUrl(
+      storeItem.modelFileUrlKey,
+    );
 
-  //   const models = await this.storeItemsService.findAllByUser(userId);
+    const result: StoreItemDetailsInfoDTO = {
+      id:                       storeItem.id,
+      title:                    storeItem.title,
+      brand:                    storeItem.brand,
+      barcode_value:            storeItem.barcodeValue,
+      barcode_download_url:     barcodeFileUrlKey,
+      model_file_download_url:  modelFileUrlKey,
+      amount:                   storeItem.amount,
+      date_created:             storeItem.dateCreated.toDateString(),
+      media_files_url_keys:     []
+    };
+    return result;
+  }
 
-  //   const results: StoreItemGeneralInfoDTO[] = models.map((model) => ({
-  //     id: model.id,
-  //     name: model.title,
-  //     size: model.size,
-  //     size_type: 'Mb',
-  //   }));
-
-  //   return results;
-  // }
-
-  // // MARK: - POST - Delete Model
-  // @Post(':id')
-  // @HttpCode(HttpStatus.OK)
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth()
-  // @ApiUnauthorizedResponse({ description: 'Authentication required' })
-  // @ApiOperation({ summary: 'Delete model by model id' })
-  // @ApiOkResponse({
-  //   description: 'Boolean response for operations',
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       success: { type: 'boolean', example: true },
-  //     },
-  //   },
-  // })
-  // @ApiNotFoundResponse({ description: 'Model with entered Id not found' })
-  // async deleteModel(
-  //   @Param('id') modelId: string,
-  // ): Promise<{ success: boolean }> {
-  //   this.logger.info('deleteModel called', { modelId });
-  //   return await this.storeItemsService.deleteModel(modelId);
-  // }
+  // MARK: - POST - Delete Model
+  @Post(':id')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiNotFoundResponse({ description: 'Model with entered Id not found' })
+  async deleteStoreItem(
+    @Param('id') itemId: string,
+  ): Promise<{ success: boolean }> {
+    this.logger.info('deleteStoreItem called', { itemId });
+    return await this.storeItemsService.deleteModel(itemId);
+  }
 }

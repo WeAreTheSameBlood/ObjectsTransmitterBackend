@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { StoreItem } from "../entities/storage/store-item";
 import { AppWriteStorageService } from '@services';
 import { ModelsRepository } from '../repositories/store-items.repository';
@@ -33,35 +33,31 @@ export class StoreItemsService {
     return this.modelsRepo.save(newItem);
   }
 
-  // // MARK: - Find All
-  // async findAll(): Promise<StoreItem[]> {
-  //   return this.modelsRepo.findAll();
-  // }
+  // MARK: - Find All
+  async findAll(): Promise<StoreItem[]> {
+    return this.modelsRepo.findAll();
+  }
 
-  // // MARK: - Find One By ID
-  // async findOneById(modelId: string): Promise<StoreItem | null> {
-  //   return this.modelsRepo.findOneById(modelId);
-  // }
+  // MARK: - Find One By ID
+  async findOneById(modelId: string): Promise<StoreItem | null> {
+    return this.modelsRepo.findOneById(modelId);
+  }
 
-  // // MARK: - Find One By ID
-  // async findAllByUser(userId: string): Promise<StoreItem[]> {
-  //   return this.modelsRepo.findAllByUser(userId);
-  // }
+  // MARK: - Delete
+  async deleteModel(
+    modelId: string
+  ): Promise<{ success: boolean }> {
+    const storeItem = await this.modelsRepo.findOneById(modelId);
 
-  // // MARK: - Delete
-  // async deleteModel(
-  //   modelId: string
-  // ): Promise<{ success: boolean }> {
-  //   const model = await this.modelsRepo.findOneById(modelId);
-  //   if (model) {
-  //     const resultDB = await this.modelsRepo.delete(modelId);
-  //     await this.storageService.deleteFile(model.model_file_url_key);
-  //     return { success: resultDB }
-  //   } else {
-  //     throw new HttpException(
-  //       'Model with entered Id not found',
-  //       HttpStatus.NOT_FOUND
-  //     )
-  //   }
-  // }
+    if (storeItem) {
+      const resultDB = await this.modelsRepo.delete(modelId);
+      await this.storageService.deleteFile(storeItem.modelFileUrlKey);
+      return { success: resultDB }
+    } else {
+      throw new HttpException(
+        'Model with entered Id not found',
+        HttpStatus.NOT_FOUND
+      )
+    }
+  }
 }
