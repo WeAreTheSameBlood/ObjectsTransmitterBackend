@@ -19,8 +19,8 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
-@ApiTags('users')
-@Controller('users')
+// @ApiTags('users')
+// @Controller('users')
 export class UsersController {
   // MARK: - Init
   constructor(private readonly usersService: UsersService) {}

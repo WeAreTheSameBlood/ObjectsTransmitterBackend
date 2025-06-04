@@ -25,9 +25,6 @@ export class StoreItem {
   })
   barcodeValue: string;
 
-  @Column({ name: 'barcode_file_url_key' })
-  barcodeFileUrlKey: string;
-
   @Column({ name: 'model_file_url_key' })
   modelFileUrlKey: string;
 

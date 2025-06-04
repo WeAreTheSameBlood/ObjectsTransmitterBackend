@@ -16,16 +16,13 @@ export class StoreItemsService {
   async addNewItem(
     itemDto: StoreItemAddDTO,
     modelFile: Express.Multer.File,
-    barcodeImageFile: Express.Multer.File,
   ): Promise<StoreItem> {
     const modelFileKey: string =    await this.storageService.uploadModelFile(modelFile);
-    const barcodeImageKey: string = await this.storageService.uploadModelFile(barcodeImageFile);
 
     const newItem: StoreItem = this.modelsRepo.create({
       title:              itemDto.title,
       brand:              itemDto.brand,
       barcodeValue:       itemDto.barcode_value,
-      barcodeFileUrlKey:  barcodeImageKey,
       modelFileUrlKey:    modelFileKey,
       amount:             Number(itemDto.amount)
     });
