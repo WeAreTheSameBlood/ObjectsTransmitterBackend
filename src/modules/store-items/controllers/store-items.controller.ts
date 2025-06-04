@@ -75,9 +75,9 @@ export class StoreItemsController {
     @Body() itemDto: StoreItemAddDTO,
   ): Promise<{ item_id: string }> {
     this.logger.info('newStoreItem called', {
-      title: itemDto.title,
-      brand: itemDto.brand,
-      amount: itemDto.amount,
+      title:        itemDto.title,
+      brand:        itemDto.brand,
+      amount:       itemDto.amount,
       barcodeValue: itemDto.barcode_value,
     });
 
@@ -86,8 +86,8 @@ export class StoreItemsController {
     if (!modelFile) {
       this.logger.error('newStoreItem missing required fields or files', {
         modelFileExists: modelFile != null,
-        title: itemDto.title,
-        brand: itemDto.brand,
+        title:  itemDto.title,
+        brand:  itemDto.brand,
         amount: itemDto.amount,
       });
       throw new HttpException(
@@ -124,9 +124,9 @@ export class StoreItemsController {
 
       const storeItems = await this.storeItemsService.findAll();
       return storeItems.map((item) => ({
-        id: item.id,
-        title: item.title,
-        brand: item.brand,
+        id:     item.id,
+        title:  item.title,
+        brand:  item.brand,
         amount: item.amount,
       }));
     } catch (error) {
@@ -160,14 +160,14 @@ export class StoreItemsController {
     );
 
     const result: StoreItemDetailsInfoDTO = {
-      id: storeItem.id,
-      title: storeItem.title,
-      brand: storeItem.brand,
-      barcode_value: storeItem.barcodeValue,
-      model_file_download_url: modelFileUrlKey,
-      amount: storeItem.amount,
-      date_created: storeItem.dateCreated.toDateString(),
-      media_files_url_keys: [],
+      id:                       storeItem.id,
+      title:                    storeItem.title,
+      brand:                    storeItem.brand,
+      barcode_value:            storeItem.barcodeValue,
+      model_file_download_url:  modelFileUrlKey,
+      amount:                   storeItem.amount,
+      date_created:             storeItem.dateCreated.toDateString(),
+      media_files_url_keys:     [],
     };
     return result;
   }

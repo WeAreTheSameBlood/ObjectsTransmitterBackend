@@ -7,9 +7,8 @@ export class StoreItemAddDTO {
   @IsString()
   brand: string;
 
-  @IsOptional()
   @IsString()
-  barcode_value?: string;
+  barcode_value: string;
 
   @IsString()
   amount: string;
