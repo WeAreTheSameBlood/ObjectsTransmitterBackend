@@ -48,8 +48,15 @@ export class StoreItemsController {
         barcode_value: { type: 'string', example: '123456789012' },
         amount: { type: 'string', example: '14' },
         model_file: { type: 'file', format: 'binary' },
+        title_image: { type: 'file', format: 'binary' },
       },
-      required: ['title', 'brand', 'barcode_value', 'amount', 'model_file'],
+      required: [
+        'title',
+        'brand',
+        'barcode_value',
+        'amount',
+        'model_file, title_image',
+      ],
     },
   })
   @ApiCreatedResponse({
@@ -66,28 +73,36 @@ export class StoreItemsController {
     // type: Object({ item_id: { type: 'string' } }),
   })
   @ApiBadRequestResponse({ description: 'Missing file or required data' })
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'model_file', maxCount: 1 }]))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'model_file',   maxCount: 1 },
+      { name: 'title_image',  maxCount: 1, },
+    ]),
+  )
   async newStoreItem(
     @UploadedFiles()
     files: {
       model_file?: Express.Multer.File[];
+      title_image?: Express.Multer.File[];
     },
     @Body() itemDto: StoreItemAddDTO,
   ): Promise<{ item_id: string }> {
     this.logger.info('newStoreItem called', {
-      title:        itemDto.title,
-      brand:        itemDto.brand,
-      amount:       itemDto.amount,
+      title: itemDto.title,
+      brand: itemDto.brand,
+      amount: itemDto.amount,
       barcodeValue: itemDto.barcode_value,
     });
 
     const modelFile = files.model_file?.[0];
+    const titleImage = files.title_image?.[0];
 
-    if (!modelFile) {
+    if (!modelFile || !titleImage) {
       this.logger.error('newStoreItem missing required fields or files', {
         modelFileExists: modelFile != null,
-        title:  itemDto.title,
-        brand:  itemDto.brand,
+        titleImageExists: titleImage != null,
+        title: itemDto.title,
+        brand: itemDto.brand,
         amount: itemDto.amount,
       });
       throw new HttpException(
@@ -100,6 +115,7 @@ export class StoreItemsController {
       const storeItem: StoreItem = await this.storeItemsService.addNewItem(
         itemDto,
         modelFile,
+        titleImage,
       );
       this.logger.info('newStoreItem succeeded', { itemId: storeItem.id });
       return { item_id: storeItem.id };
@@ -124,9 +140,12 @@ export class StoreItemsController {
 
       const storeItems = await this.storeItemsService.findAll();
       return storeItems.map((item) => ({
-        id:     item.id,
-        title:  item.title,
-        brand:  item.brand,
+        id: item.id,
+        title: item.title,
+        brand: item.brand,
+        title_image_download_url: this.storageService.getFileDownloadUrl(
+          item.titleImageUrlKey,
+        ),
         amount: item.amount,
       }));
     } catch (error) {
@@ -158,16 +177,20 @@ export class StoreItemsController {
     const modelFileUrlKey = this.storageService.getFileDownloadUrl(
       storeItem.modelFileUrlKey,
     );
+    const titleImageUrlKey = this.storageService.getFileDownloadUrl(
+      storeItem.titleImageUrlKey,
+    );
 
     const result: StoreItemDetailsInfoDTO = {
-      id:                       storeItem.id,
-      title:                    storeItem.title,
-      brand:                    storeItem.brand,
-      barcode_value:            storeItem.barcodeValue,
-      model_file_download_url:  modelFileUrlKey,
-      amount:                   storeItem.amount,
-      date_created:             storeItem.dateCreated.toDateString(),
-      media_files_url_keys:     [],
+      id: storeItem.id,
+      title: storeItem.title,
+      brand: storeItem.brand,
+      barcode_value: storeItem.barcodeValue,
+      model_file_download_url: modelFileUrlKey,
+      title_image_download_url: titleImageUrlKey,
+      amount: storeItem.amount,
+      date_created: storeItem.dateCreated.toDateString(),
+      media_files_url_keys: [],
     };
     return result;
   }

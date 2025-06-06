@@ -28,6 +28,9 @@ export class StoreItem {
   @Column({ name: 'model_file_url_key' })
   modelFileUrlKey: string;
 
+  @Column({ name: 'title_image_url_key' })
+  titleImageUrlKey: string;
+
   @Column({ default: 0 })
   amount: number;
 

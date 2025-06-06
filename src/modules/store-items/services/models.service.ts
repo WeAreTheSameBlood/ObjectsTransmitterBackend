@@ -16,15 +16,21 @@ export class StoreItemsService {
   async addNewItem(
     itemDto: StoreItemAddDTO,
     modelFile: Express.Multer.File,
+    titleImage: Express.Multer.File,
   ): Promise<StoreItem> {
-    const modelFileKey: string =    await this.storageService.uploadModelFile(modelFile);
+    const modelFileKey: string =
+      await this.storageService.uploadModelFile(modelFile);
+    
+    const titleImageKey: string =
+      await this.storageService.uploadModelFile(titleImage);
 
     const newItem: StoreItem = this.modelsRepo.create({
       title:              itemDto.title,
       brand:              itemDto.brand,
       barcodeValue:       itemDto.barcode_value,
       modelFileUrlKey:    modelFileKey,
-      amount:             Number(itemDto.amount)
+      titleImageUrlKey:   titleImageKey,
+      amount:             Number(itemDto.amount),
     });
 
     return this.modelsRepo.save(newItem);
@@ -41,20 +47,18 @@ export class StoreItemsService {
   }
 
   // MARK: - Delete
-  async deleteModel(
-    modelId: string
-  ): Promise<{ success: boolean }> {
+  async deleteModel(modelId: string): Promise<{ success: boolean }> {
     const storeItem = await this.modelsRepo.findOneById(modelId);
 
     if (storeItem) {
       const resultDB = await this.modelsRepo.delete(modelId);
       await this.storageService.deleteFile(storeItem.modelFileUrlKey);
-      return { success: resultDB }
+      return { success: resultDB };
     } else {
       throw new HttpException(
         'Model with entered Id not found',
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 }

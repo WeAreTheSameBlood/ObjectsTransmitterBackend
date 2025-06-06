@@ -20,6 +20,12 @@ export class StoreItemGeneralInfoDTO {
   brand: string;
 
   @ApiProperty({
+    example: 'https://some-backet-uri.com/storage/buckets/.../download',
+    description: 'URL to download the title image',
+  })
+  title_image_download_url: string;
+
+  @ApiProperty({
     example: 14,
     description: 'Total amount, int value',
   })
