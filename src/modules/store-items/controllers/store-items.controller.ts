@@ -51,11 +51,9 @@ export class StoreItemsController {
         title_image: { type: 'file', format: 'binary' },
       },
       required: [
-        'title',
-        'brand',
-        'barcode_value',
-        'amount',
-        'model_file, title_image',
+        'title', 'brand',
+        'barcode_value', 'amount',
+        'model_file', 'title_image',
       ],
     },
   })
