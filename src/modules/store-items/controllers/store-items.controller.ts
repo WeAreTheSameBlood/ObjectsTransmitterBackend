@@ -138,13 +138,14 @@ export class StoreItemsController {
 
       const storeItems = await this.storeItemsService.findAll();
       return storeItems.map((item) => ({
-        id: item.id,
-        title: item.title,
-        brand: item.brand,
+        id:             item.id,
+        title:          item.title,
+        brand:          item.brand,
+        barcode_value:  item.barcodeValue,
         title_image_download_url: this.storageService.getFileDownloadUrl(
           item.titleImageUrlKey,
         ),
-        amount: item.amount,
+        amount:         item.amount,
       }));
     } catch (error) {
       this.logger.error('getStoreItems failed', error);

@@ -20,6 +20,13 @@ export class StoreItemGeneralInfoDTO {
   brand: string;
 
   @ApiProperty({
+    example: '1 2345 678 9123 4',
+    description: 'Barcode value',
+    nullable: true,
+  })
+  barcode_value: string;
+
+  @ApiProperty({
     example: 'https://some-backet-uri.com/storage/buckets/.../download',
     description: 'URL to download the title image',
   })
