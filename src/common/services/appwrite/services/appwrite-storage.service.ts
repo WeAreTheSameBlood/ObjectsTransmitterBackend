@@ -8,6 +8,9 @@ import { tmpdir } from 'os';
 import { fileFromPath } from 'formdata-node/file-from-path';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from "@common/services/logger/service/logger-service";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// import { InputFile } from 'node-appwrite/file';
+const { InputFile } = require('node-appwrite/file');
 
 @Injectable()
 export class AppWriteStorageService implements IAppWriteStorageManager {
@@ -36,13 +39,14 @@ export class AppWriteStorageService implements IAppWriteStorageManager {
     await fs.writeFile(tempPath, file.buffer);
 
     // Convert temp file -->  File object
-    const dataFile = await fileFromPath(tempPath);
+    // const dataFile = await fileFromPath(tempPath);
+    const dataFile: any = InputFile.fromPath(tempPath, file.originalname);
 
     // Request to Bucket
     const response = await this.storage.createFile(
       this.bucketId,
       fileId,
-      dataFile as any,
+      dataFile,
     );
 
     // Delete temp file

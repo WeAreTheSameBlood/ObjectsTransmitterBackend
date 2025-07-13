@@ -1,4 +1,6 @@
-import { IsString, IsOptional } from "class-validator";
+import { IsArray, IsEnum, IsString } from 'class-validator';
+import { ItemCategory } from "../domain/item-categories";
+import { Transform } from 'class-transformer';
 
 export class StoreItemAddDTO {
   @IsString()
@@ -11,5 +13,19 @@ export class StoreItemAddDTO {
   barcode_value: string;
 
   @IsString()
-  amount: string;
+  price: string;
+
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value.split(',').map((v: string) => v.trim());
+      }
+    }
+    return value;
+  }, { toClassOnly: true })
+  @IsArray()
+  @IsEnum(ItemCategory, { each: true })
+  categories: ItemCategory[];
 }

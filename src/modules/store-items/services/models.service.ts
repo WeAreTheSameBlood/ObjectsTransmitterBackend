@@ -1,3 +1,4 @@
+import { StoreItemMedia } from '../entities/storage/store-item-media';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { StoreItem } from "../entities/storage/store-item";
 import { AppWriteStorageService } from '@services';
@@ -17,20 +18,32 @@ export class StoreItemsService {
     itemDto: StoreItemAddDTO,
     modelFile: Express.Multer.File,
     titleImage: Express.Multer.File,
+    additionalImages: Express.Multer.File[],
   ): Promise<StoreItem> {
     const modelFileKey: string =
       await this.storageService.uploadModelFile(modelFile);
     
     const titleImageKey: string =
       await this.storageService.uploadModelFile(titleImage);
+    
+
+    const additionalImageKeys: string[] = await Promise.all(
+      additionalImages.map(file => this.storageService.uploadModelFile(file))
+    );
+
+    const mediaEntities: StoreItemMedia[] = additionalImageKeys.map(key => {
+      const media = new StoreItemMedia();
+      media.media_file_url_key = key;
+      return media;
+    });
 
     const newItem: StoreItem = this.modelsRepo.create({
       title:              itemDto.title,
-      brand:              itemDto.brand,
-      barcodeValue:       itemDto.barcode_value,
       modelFileUrlKey:    modelFileKey,
       titleImageUrlKey:   titleImageKey,
-      amount:             Number(itemDto.amount),
+      price:              Number(itemDto.price),
+      categories:         itemDto.categories,
+      media:              mediaEntities,
     });
 
     return this.modelsRepo.save(newItem);

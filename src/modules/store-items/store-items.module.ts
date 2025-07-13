@@ -6,13 +6,14 @@ import { StoreItem } from './entities/storage/store-item';
 import { StoreItemMedia } from './entities/storage/store-item-media';
 import { ModelsRepository } from './repositories/store-items.repository';
 import { AppWriteModule } from '@services/appwrite/appwrite.module';
+import { GeneralController } from './controllers/general.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([StoreItem, StoreItemMedia]),
     AppWriteModule,
   ],
-  controllers: [StoreItemsController],
+  controllers: [StoreItemsController, GeneralController],
   providers: [
     ModelsRepository,
     StoreItemsService

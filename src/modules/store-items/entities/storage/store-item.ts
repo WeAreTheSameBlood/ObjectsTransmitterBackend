@@ -5,6 +5,7 @@ import {
     OneToMany
 } from 'typeorm';
 import { StoreItemMedia } from './store-item-media';
+import { ItemCategory } from '../domain/item-categories';
 
 @Entity('store_items')
 export class StoreItem {
@@ -15,15 +16,12 @@ export class StoreItem {
   @Column()
   title: string;
 
-  @Column()
-  brand: string;
-
   @Column({
-    name: 'barcode_value',
-    nullable: true,
-    default: null,
+    type: 'enum',
+    enum: ItemCategory,
+    array: true,
   })
-  barcodeValue: string;
+  categories: ItemCategory[];
 
   @Column({ name: 'model_file_url_key' })
   modelFileUrlKey: string;
@@ -31,8 +29,8 @@ export class StoreItem {
   @Column({ name: 'title_image_url_key' })
   titleImageUrlKey: string;
 
-  @Column({ default: 0 })
-  amount: number;
+  @Column('decimal', { name: 'price', precision: 5, scale: 2, default: 0 })
+  price: number;
 
   @CreateDateColumn({ name: 'date_created' })
   dateCreated: Date;

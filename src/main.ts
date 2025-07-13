@@ -24,10 +24,6 @@ async function bootstrap() {
     .setTitle('Objects Transmitter API')
     .setDescription('REST API Doc')
     .setVersion('1.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token',
-    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {

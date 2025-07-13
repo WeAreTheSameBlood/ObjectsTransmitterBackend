@@ -24,7 +24,7 @@ echo "🔍 Listing backups in bucket..."
 files_json=$(curl -s \
   -H "X-Appwrite-Project: $APPWRITE_PROJECT_ID" \
   -H "X-Appwrite-Key:   $APPWRITE_API_KEY" \
-  "$APPWRITE_ENDPOINT/storage/buckets/$APPWRITE_BACKUP_BUCKET_ID/files")
+  "$APPWRITE_ENDPOINT/storage/buckets/$APPWRITE_BACKUP_BUCKET_ID/files?search=db_backup_")
 
 if [[ "$(echo "$files_json" | jq 'has("files")')" != "true" ]]; then
   echo "❌ Unexpected response, missing 'files':"

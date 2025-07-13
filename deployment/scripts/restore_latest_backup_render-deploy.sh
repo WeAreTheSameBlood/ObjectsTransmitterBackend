@@ -26,7 +26,7 @@ echo "🔍 Listing backups in bucket..."
 files_json=$(curl -s \
   -H "X-Appwrite-Project: $APPWRITE_PROJECT_ID" \
   -H "X-Appwrite-Key:   $APPWRITE_API_KEY" \
-  "$APPWRITE_ENDPOINT/storage/buckets/$APPWRITE_BACKUP_BUCKET_ID/files")
+  "$APPWRITE_ENDPOINT/storage/buckets/$APPWRITE_BACKUP_BUCKET_ID/files?search=db_backup_")
 
 if [[ "$(echo "$files_json" | jq 'has("files")')" != "true" ]]; then
   echo "❌ Unexpected response, missing 'files':"
@@ -36,11 +36,15 @@ fi
 
 echo "🔍 Filtering backups starting with 'db_backup_'"
 
-# Filter last backup if it's possible
+ # Filter all backups then sort by creation timestamp and pick latest
 latest=$(echo "$files_json" | jq -r '
   .files
-  | map(select(.name | startswith("db_backup_")))
-  | sort_by(.name)
+  | map(select(.name | test("^db_backup_")))
+  | sort_by(
+      (.[ "$createdAt" ]
+        | sub("\\.[0-9]+\\+00:00$"; "Z")
+        | fromdateiso8601)
+    )
   | last')
 fileId=$(echo "$latest"   | jq -r '.["$id"]')
 fileName=$(echo "$latest" | jq -r '.name')

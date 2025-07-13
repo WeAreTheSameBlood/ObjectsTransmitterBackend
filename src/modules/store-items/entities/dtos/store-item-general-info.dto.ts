@@ -14,27 +14,21 @@ export class StoreItemGeneralInfoDTO {
   title: string;
 
   @ApiProperty({
-    example: 'Bean & Co.',
-    description: 'Brand of the store item',
-  })
-  brand: string;
-
-  @ApiProperty({
-    example: '1 2345 678 9123 4',
-    description: 'Barcode value',
-    nullable: true,
-  })
-  barcode_value: string;
-
-  @ApiProperty({
     example: 'https://some-backet-uri.com/storage/buckets/.../download',
     description: 'URL to download the title image',
   })
   title_image_download_url: string;
 
   @ApiProperty({
-    example: 14,
-    description: 'Total amount, int value',
+    example: 3.14,
+    description: 'Price od 3D model ($)',
   })
-  amount: number;
+  price: number;
+  
+  @ApiProperty({
+    example: ['Tools', 'Other'],
+    description: 'Categories of the store item',
+    type: [String],
+  })
+  categories: string[];
 }
