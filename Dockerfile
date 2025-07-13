@@ -9,7 +9,7 @@ COPY . .
 
 RUN apk add --no-cache postgresql-client
 RUN npm run build
-RUN npm run migration:run
 
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "npm run migration:run && node dist/main"]
+# CMD ["node", "dist/main"]
 # CMD ["npm", "run", "start:dev"]
