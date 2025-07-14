@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { StoreItem } from "./store-item";
 
 @Entity('store_item_media_files')
@@ -8,6 +8,7 @@ export class StoreItemMedia {
   id: string;
 
   @ManyToOne(() => StoreItem, (item) => item.media, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'storeItemId' })
   store_item: StoreItem;
 
   @Column()

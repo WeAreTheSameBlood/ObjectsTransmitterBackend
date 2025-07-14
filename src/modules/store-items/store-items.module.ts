@@ -4,9 +4,10 @@ import { StoreItemsService } from './services/models.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StoreItem } from './entities/storage/store-item';
 import { StoreItemMedia } from './entities/storage/store-item-media';
-import { ModelsRepository } from './repositories/store-items.repository';
+import { ItemRepository } from './repositories/store-items.repository';
 import { AppWriteModule } from '@services/appwrite/appwrite.module';
 import { GeneralController } from './controllers/general.controller';
+import { ItemMediaRepository } from './repositories/store-items-media.repository';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { GeneralController } from './controllers/general.controller';
   ],
   controllers: [StoreItemsController, GeneralController],
   providers: [
-    ModelsRepository,
+    ItemRepository,
+    ItemMediaRepository,
     StoreItemsService
   ],
 })

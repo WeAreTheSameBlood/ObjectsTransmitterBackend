@@ -2,14 +2,16 @@ import { StoreItemMedia } from '../entities/storage/store-item-media';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { StoreItem } from "../entities/storage/store-item";
 import { AppWriteStorageService } from '@services';
-import { ModelsRepository } from '../repositories/store-items.repository';
+import { ItemRepository } from '../repositories/store-items.repository';
 import { StoreItemAddDTO } from '../entities/dtos';
+import { ItemMediaRepository } from '../repositories/store-items-media.repository';
 
 @Injectable()
 export class StoreItemsService {
   // MARK: - Init
   constructor(
-    private modelsRepo: ModelsRepository,
+    private modelsRepo: ItemRepository,
+    private modelsMediaRepo: ItemMediaRepository,
     private storageService: AppWriteStorageService,
   ) {}
 
@@ -32,8 +34,8 @@ export class StoreItemsService {
     );
 
     const mediaEntities: StoreItemMedia[] = additionalImageKeys.map(key => {
-      const media = new StoreItemMedia();
-      media.media_file_url_key = key;
+      const media = this.modelsMediaRepo.create({ media_file_url_key: key })
+      this.modelsMediaRepo.save(media);
       return media;
     });
 
@@ -45,6 +47,8 @@ export class StoreItemsService {
       categories:         itemDto.categories,
       media:              mediaEntities,
     });
+
+    mediaEntities.forEach((media) => (media.store_item = newItem));
 
     return this.modelsRepo.save(newItem);
   }

@@ -5,7 +5,7 @@ import { StoreItem } from "../entities/storage/store-item";
 
 
 @Injectable()
-export class ModelsRepository {
+export class ItemRepository {
   // Init
   constructor(
     @InjectRepository(StoreItem)

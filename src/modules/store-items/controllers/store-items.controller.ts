@@ -192,7 +192,11 @@ export class StoreItemsController {
       price: storeItem.price,
       date_created: storeItem.dateCreated.toDateString(),
       categories: storeItem.categories,
-      media_files_url_keys: storeItem.media.map((img) => img.media_file_url_key)
+      media_files_url_keys: storeItem.media.map(
+        (img) => this.storageService.getFileDownloadUrl(
+          img.media_file_url_key,
+        )
+      )
     };
     return result;
   }
