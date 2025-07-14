@@ -36,6 +36,8 @@ export class StoreItem {
   dateCreated: Date;
 
   // Realate
-  @OneToMany(() => StoreItemMedia, (file) => file.store_item)
+  @OneToMany(() => StoreItemMedia, (file) => file.store_item, {
+    cascade: ['insert'],
+  })
   media: StoreItemMedia[];
 }

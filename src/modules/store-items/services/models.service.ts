@@ -33,22 +33,18 @@ export class StoreItemsService {
       additionalImages.map(file => this.storageService.uploadModelFile(file))
     );
 
-    const mediaEntities: StoreItemMedia[] = additionalImageKeys.map(key => {
-      const media = this.modelsMediaRepo.create({ media_file_url_key: key })
-      this.modelsMediaRepo.save(media);
-      return media;
-    });
+    const mediaEntities = additionalImageKeys.map(key =>
+      this.modelsMediaRepo.create({ media_file_url_key: key })
+    );
 
-    const newItem: StoreItem = this.modelsRepo.create({
-      title:              itemDto.title,
-      modelFileUrlKey:    modelFileKey,
-      titleImageUrlKey:   titleImageKey,
-      price:              Number(itemDto.price),
-      categories:         itemDto.categories,
-      media:              mediaEntities,
+    const newItem = this.modelsRepo.create({
+      title:            itemDto.title,
+      modelFileUrlKey:  modelFileKey,
+      titleImageUrlKey: titleImageKey,
+      price:            Number(itemDto.price),
+      categories:       itemDto.categories,
+      media:            mediaEntities,
     });
-
-    mediaEntities.forEach((media) => (media.store_item = newItem));
 
     return this.modelsRepo.save(newItem);
   }
