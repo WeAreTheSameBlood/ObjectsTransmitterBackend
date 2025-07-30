@@ -9,7 +9,7 @@
 
 ## 🚀 Overview
 
-**ObjectsTransmitter** is backend built with NestJS for storing, serving, and managing 3D model files (.obj, .usdz, .glb).  
+**ObjectsTransmitter** is backend built with NestJS for storing, serving, and managing 3D model files (.obj, .glb).  
 It uses AppWrite for storage and authentication, PostgreSQL for persistent data, JWT for session management, and an automated daily backup process.
 
 ---
@@ -42,20 +42,6 @@ It uses AppWrite for storage and authentication, PostgreSQL for persistent data,
 
 ## ✨ API Endpoints
 
-### Authentication
-
-- `POST /v1/auth/signup`  
-  Register a new user, create AppWrite account & session, return JWT
-
-- `POST /v1/auth/login`  
-  Login existing user via AppWrite, return JWT & session ID
-
-- `POST /v1/auth/refresh`  
-  Check current JWT and return a new token
-
-- `POST /v1/auth/logout`  
-  Invalidate the AppWrite session
-
 ### Models
 
 - `POST /v1/models`  
@@ -72,14 +58,6 @@ It uses AppWrite for storage and authentication, PostgreSQL for persistent data,
 
 - `POST /v1/models/:id`  
   Deleting model by id and return result
-
-### Users
-
-- `GET    /v1/users`  
-  List all users with general data
-
-- `GET    /v1/users/:id`  
-  Get one user’s profile (detailed)
 
 ---
 

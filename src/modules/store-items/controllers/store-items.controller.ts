@@ -28,7 +28,7 @@ export class StoreItemsController {
     private readonly storeItemsService: StoreItemsService,
     private readonly storageService: AppWriteStorageService,
     private readonly logger: LoggerService,
-  ) { }
+  ) {}
 
   // MARK: - POST - New Item
   @Post()
@@ -45,9 +45,9 @@ export class StoreItemsController {
           type: 'array',
           items: {
             type: 'string',
-            enum: ['Art', 'Household', 'Tools', 'Other'],
+            enum: ['Console', 'Headphones', 'Tools', 'Other'],
           },
-          example: ['Tools', 'Other'],
+          example: ['Controller', 'Other'],
         },
         model_file: { type: 'file', format: 'binary' },
         title_image: { type: 'file', format: 'binary' },
@@ -93,7 +93,7 @@ export class StoreItemsController {
       title: itemDto.title,
       price: itemDto.price,
       categories: itemDto.categories,
-      additionalImages: files.additional_images?.length
+      additionalImages: files.additional_images?.length,
     });
 
     const modelFile = files.model_file?.[0];
@@ -192,11 +192,9 @@ export class StoreItemsController {
       price: storeItem.price,
       date_created: storeItem.dateCreated.toDateString(),
       categories: storeItem.categories,
-      media_files_url_keys: storeItem.media.map(
-        (img) => this.storageService.getFileDownloadUrl(
-          img.media_file_url_key,
-        )
-      )
+      media_files_url_keys: storeItem.media.map((img) =>
+        this.storageService.getFileDownloadUrl(img.media_file_url_key),
+      ),
     };
     return result;
   }
